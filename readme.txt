@@ -20,3 +20,14 @@ There are several limitations:
 - No access to the device hardware. That means you cannot re-partition SD card, you cannot burn CD-Roms using an external USB burner etc.
 - No camera support. It's possible to add, however not worth the effort - I don't know any Ubuntu apps that use camera (except for Skype, but it's already available as a native app).
 - No multitouch support. I might add touch pressure support to the GIMP, via the graphic tablet emulation.
+- No SYSV IPC (shared memory support). It's possible to add emulation, however there are very few apps that depend in that feature.
+
+
+Compilation.
+============
+
+You'll need Android NDK r7c and toolchain in your $PATH, Android SDK, autotools and other various commandline stuff. Run
+git submodule update --init
+then run
+./build.sh
+That should be it.
