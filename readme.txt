@@ -26,7 +26,8 @@ There are several limitations:
 Compilation.
 ============
 
-You'll need Android NDK r7c and toolchain in your $PATH, Android SDK, autotools and other various commandline stuff. Run
+You'll need Android NDK r7c and toolchain in your $PATH, Android SDK, autotools, debhelper, build-essentials, Debian ARM toolchain and other various commandline stuff.
+Run
 git submodule update --init
 then run
 ./build.sh
