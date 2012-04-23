@@ -1,0 +1,6 @@
+[submodule "fakechroot"]
+	path = fakechroot
+	url = git://github.com/pelya/fakechroot.git
+[submodule "sdl"]
+	path = sdl
+	url = git://github.com/pelya/commandergenius.git
