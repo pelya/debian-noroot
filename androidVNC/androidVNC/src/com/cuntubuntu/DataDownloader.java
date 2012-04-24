@@ -211,7 +211,7 @@ class DataDownloader extends Thread
 		
 		Resources res = Parent.getResources();
 
-		String path = Parent.getFilesDir().getAbsolutePath() + "/" + DownloadFlagFileName;
+		String path = getOutFilePath(DownloadFlagFileName);
 		InputStream checkFile = null;
 		try {
 			checkFile = new FileInputStream( path );
@@ -539,10 +539,10 @@ class DataDownloader extends Thread
 		};
 
 		OutputStream out = null;
-		path = Parent.getFilesDir().getAbsolutePath() + "/" + DownloadFlagFileName;
+		path = getOutFilePath(DownloadFlagFileName);
 		try {
 			out = new FileOutputStream( path );
-			out.write(downloadUrls[downloadUrlIndex].getBytes("UTF-8"));
+			out.write(DataDownloadUrl.getBytes("UTF-8"));
 			out.flush();
 			out.close();
 		} catch( FileNotFoundException e ) {
@@ -566,7 +566,7 @@ class DataDownloader extends Thread
 		Status.setText( "Extracting files..." );
 		System.out.println( "Extracting files..." );
 		String intFs = Parent.getFilesDir().getAbsolutePath() + "/";
-		if ( ! (new File(intFs + "chroot.sh").exists()) || true ) {
+		if ( ! (new File(intFs + "chroot.sh").exists()) ) {
 		try {
 			System.out.println( "mkdir " + intFs );
 			Runtime.getRuntime().exec("mkdir " + intFs).waitFor();
@@ -597,7 +597,8 @@ class DataDownloader extends Thread
 			copyFile(getOutFilePath("libfakechroot.so"), intFs + "libfakechroot.so");
 			System.out.println( "chmod 755 " + intFs + "libfakechroot.so" );
 			Runtime.getRuntime().exec("chmod 755 " + intFs + "libfakechroot.so" ).waitFor();
-			System.out.println( "mkdir " + intFs + "root/.vnc/" );
+			System.out.println( "mkdir " + intFs + "root" );
+			System.out.println( "mkdir " + intFs + "root/.vnc" );
 			System.out.println( "copy " + getOutFilePath("passwd") + " -> " + intFs + "root/.vnc/passwd");
 			copyFile(getOutFilePath("passwd"), intFs + "root/.vnc/passwd");
 			Runtime.getRuntime().exec("chmod 600 " + intFs + "root/.vnc/passwd" ).waitFor();
@@ -619,7 +620,7 @@ class DataDownloader extends Thread
 
 		if( fakechroot == null ) {
 			try {
-				System.out.println( "Launching Ubuntu" );
+				Status.setText( "Launching Ubuntu" );
 				ProcessBuilder pb = new ProcessBuilder("./chroot.sh");
 				Map<String, String> env = pb.environment();
 				int w = Parent.getWindowManager().getDefaultDisplay().getWidth();
@@ -636,6 +637,7 @@ class DataDownloader extends Thread
 			}
 		}
 		
+		Status.setText( "Connecting to Ubuntu" );
 		class Callback implements Runnable
 		{
 			public androidVNC Parent;
