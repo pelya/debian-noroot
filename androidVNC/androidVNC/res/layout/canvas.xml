@@ -5,13 +5,13 @@
     android:layout_height="fill_parent"
     >
 
-<android.androidVNC.VncCanvas
+<com.cuntubuntu.VncCanvas
     android:id="@+id/vnc_canvas"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="bottom|center"
     >
-</android.androidVNC.VncCanvas>
+</com.cuntubuntu.VncCanvas>
   
 <com.antlersoft.android.zoomer.ZoomControls
     android:layout_width="wrap_content"

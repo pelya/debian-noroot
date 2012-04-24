@@ -404,11 +404,11 @@ public class androidVNC extends Activity {
 		//saveAndWriteRecent();
 		selected = new ConnectionBean();
 		selected.setAddress("127.0.0.1");
-		selected.setPort(6333);
+		selected.setPort(7011);
 		selected.setNickname("");
 		selected.setUserName("");
 		selected.setForceFull(BitmapImplHint.FULL);
-		selected.setPassword("");
+		selected.setPassword("ubuntu");
 		selected.setKeepPassword(false);
 		selected.setUseLocalCursor(false);
 		selected.setColorModel(COLORMODEL.C24bit.nameString());

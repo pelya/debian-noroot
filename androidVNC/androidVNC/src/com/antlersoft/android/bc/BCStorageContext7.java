@@ -21,7 +21,7 @@ public class BCStorageContext7 implements IBCStorageContext {
 	@Override
 	public File getExternalStorageDir(Context context, String type) {
 		File f = Environment.getExternalStorageDirectory();
-		f = new File(f, "Android/data/android.androidVNC/files");
+		f = new File(f, "Android/data/com.cuntubuntu/files");
 		if (type != null)
 			f=new File(f, type);
 		f.mkdirs();

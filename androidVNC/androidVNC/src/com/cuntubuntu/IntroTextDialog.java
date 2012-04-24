@@ -31,10 +31,11 @@ class IntroTextDialog extends Dialog {
 	
 	static void showIntroTextIfNecessary(Activity context, VncDatabase database)
 	{
+		/*
 		PackageInfo pi;
 		try
 		{
-			pi = context.getPackageManager().getPackageInfo("android.androidVNC", 0);
+			pi = context.getPackageManager().getPackageInfo("com.cuntubuntu", 0);
 		}
 		catch (PackageManager.NameNotFoundException nnfe)
 		{
@@ -49,6 +50,7 @@ class IntroTextDialog extends Dialog {
 				dialog.show();
 			}
 		}
+		*/
 	}
 	
 	/**

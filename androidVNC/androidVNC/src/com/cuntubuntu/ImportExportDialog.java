@@ -132,7 +132,7 @@ class ImportExportDialog extends Dialog {
 	
 	private void errorNotify(String msg, Throwable t)
 	{
-		Log.i("android.androidVNC.ImportExportDialog", msg, t);
+		Log.i("ImportExportDialog", msg, t);
 		Utils.showErrorMessage(this.getContext(), msg + ":" + t.getMessage());
 	}
 

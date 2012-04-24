@@ -8,4 +8,4 @@ LD_PRELOAD=`pwd`/libfakechroot.so \
 FAKECHROOT_EXCLUDE_PATH=/sdcard \
 FAKECHROOT_ELFLOADER=`pwd`/lib/ld-linux.so.3 \
 lib/ld-linux.so.3 \
-usr/sbin/chroot `pwd` bin/bash
+usr/sbin/chroot `pwd` fakeroot bin/bash

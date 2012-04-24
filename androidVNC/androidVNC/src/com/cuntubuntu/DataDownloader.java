@@ -57,6 +57,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import java.lang.String;
 import android.text.SpannedString;
+import java.util.Map;
 
 
 class CountingInputStream extends BufferedInputStream {
@@ -565,7 +566,7 @@ class DataDownloader extends Thread
 		Status.setText( "Extracting files..." );
 		System.out.println( "Extracting files..." );
 		String intFs = Parent.getFilesDir().getAbsolutePath() + "/";
-		if ( ! (new File(intFs + "chroot.sh").exists()) ) {
+		if ( ! (new File(intFs + "chroot.sh").exists()) || true ) {
 		try {
 			System.out.println( "mkdir " + intFs );
 			Runtime.getRuntime().exec("mkdir " + intFs).waitFor();
@@ -587,7 +588,7 @@ class DataDownloader extends Thread
 				{
 					String lines[] = new String(buf, 0, len, "UTF-8").split("\n");
 					if(lines.length > 1)
-						Status.setText( lines[1] );
+						Status.setText( "Extracting " + lines[1] );
 				}
 				len = log.read(buf);
 			}
@@ -596,6 +597,13 @@ class DataDownloader extends Thread
 			copyFile(getOutFilePath("libfakechroot.so"), intFs + "libfakechroot.so");
 			System.out.println( "chmod 755 " + intFs + "libfakechroot.so" );
 			Runtime.getRuntime().exec("chmod 755 " + intFs + "libfakechroot.so" ).waitFor();
+			System.out.println( "mkdir " + intFs + "root/.vnc/" );
+			System.out.println( "copy " + getOutFilePath("passwd") + " -> " + intFs + "root/.vnc/passwd");
+			copyFile(getOutFilePath("passwd"), intFs + "root/.vnc/passwd");
+			Runtime.getRuntime().exec("chmod 600 " + intFs + "root/.vnc/passwd" ).waitFor();
+			System.out.println( "copy " + getOutFilePath("xstartup") + " -> " + intFs + "root/.vnc/xstartup");
+			copyFile(getOutFilePath("xstartup"), intFs + "root/.vnc/xstartup");
+			Runtime.getRuntime().exec("chmod 755 " + intFs + "root/.vnc/xstartup" ).waitFor();
 			System.out.println( "copy " + getOutFilePath("chroot.sh") + " -> " + intFs + "chroot.sh");
 			copyFile(getOutFilePath("chroot.sh"), intFs + "chroot.sh");
 			System.out.println( "chmod 755 " + intFs + "chroot.sh" );
@@ -612,8 +620,14 @@ class DataDownloader extends Thread
 		if( fakechroot == null ) {
 			try {
 				System.out.println( "Launching Ubuntu" );
-				System.out.println( "cd " + intFs + " ; ./chroot.sh" );
-				fakechroot = Runtime.getRuntime().exec( "cd " + intFs + " ; ./chroot.sh" );
+				ProcessBuilder pb = new ProcessBuilder("./chroot.sh");
+				Map<String, String> env = pb.environment();
+				int w = Parent.getWindowManager().getDefaultDisplay().getWidth();
+				int h = Parent.getWindowManager().getDefaultDisplay().getHeight();
+				env.put("DISPLAY_RESOLUTION", String.valueOf(w) + "x" + String.valueOf(h));
+				env.put("USER", "root");
+				pb.directory(new File(Parent.getFilesDir().getAbsolutePath()));
+				fakechroot = pb.start();
 				Thread.sleep(5000);
 			} catch ( Exception e ) {
 				Status.setText( "Error: " + e.toString() );

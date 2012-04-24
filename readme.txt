@@ -3,6 +3,7 @@ Ubuntu running on top of Android, without rooting your phone.
 =============================================================
 
 This is NOT full Ubuntu OS, however it allows you to run substantial amount of applications provided by the Ubuntu package manager.
+It requires 500 Mb internal device data storage (not SD card),
 
 There are several limitations:
 
