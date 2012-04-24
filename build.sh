@@ -8,5 +8,10 @@ cd fakechroot
 make -j4 && cp -f src/.libs/libfakechroot.so .. && arm-linux-gnueabi-strip -g ../libfakechroot.so || fail
 cd ..
 
-cd xserver
-
+cd androidVNC/ZoomerWithKeys
+[ -e local.properties ] || android update project -p . || fail
+ant debug || fail
+cd ../androidVNC
+[ -e local.properties ] || android update project -p . || fail
+ant debug || fail
+cd ../..
