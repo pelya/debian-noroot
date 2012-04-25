@@ -593,6 +593,7 @@ class DataDownloader extends Thread
 				len = log.read(buf);
 			}
 			p.waitFor();
+			Runtime.getRuntime().exec("rm " + getOutFilePath("ubuntu.tar.gz")).waitFor();
 			System.out.println( "copy " + getOutFilePath("libfakechroot.so") + " -> " + intFs + "libfakechroot.so");
 			copyFile(getOutFilePath("libfakechroot.so"), intFs + "libfakechroot.so");
 			System.out.println( "chmod 755 " + intFs + "libfakechroot.so" );
@@ -621,7 +622,7 @@ class DataDownloader extends Thread
 		if( fakechroot == null ) {
 			try {
 				Status.setText( "Launching Ubuntu" );
-				ProcessBuilder pb = new ProcessBuilder("./chroot.sh");
+				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh ./chroot.sh");
 				Map<String, String> env = pb.environment();
 				int w = Parent.getWindowManager().getDefaultDisplay().getWidth();
 				int h = Parent.getWindowManager().getDefaultDisplay().getHeight();
