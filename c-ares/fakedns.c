@@ -22,6 +22,50 @@ It's licensed the same way as C-Ares lib is, if anyone cares about that.
 #include <errno.h>
 #include "ares.h"
 
+/* Declarations */
+
+#define FAKEDNS_EXTERN  __attribute__((__visibility__("default")))
+
+FAKEDNS_EXTERN struct hostent *gethostbyname (__const char *__name);
+
+FAKEDNS_EXTERN struct hostent *gethostbyaddr (__const void *__addr, __socklen_t __len, int __af);
+
+FAKEDNS_EXTERN struct hostent *gethostbyname2 (__const char *__name, int __af);
+
+FAKEDNS_EXTERN int gethostbyaddr_r (__const void *__restrict __addr, __socklen_t __len,
+			    int __af,
+			    struct hostent *__restrict __result_buf,
+			    char *__restrict __buf, size_t __buflen,
+			    struct hostent **__restrict __result,
+			    int *__restrict __h_errnop);
+
+FAKEDNS_EXTERN int gethostbyname_r (__const char *__restrict __name,
+			    struct hostent *__restrict __result_buf,
+			    char *__restrict __buf, size_t __buflen,
+			    struct hostent **__restrict __result,
+			    int *__restrict __h_errnop);
+
+FAKEDNS_EXTERN int gethostbyname2_r (__const char *__restrict __name, int __af,
+			     struct hostent *__restrict __result_buf,
+			     char *__restrict __buf, size_t __buflen,
+			     struct hostent **__restrict __result,
+			     int *__restrict __h_errnop);
+
+
+FAKEDNS_EXTERN void freeaddrinfo (struct addrinfo *__ai);
+
+FAKEDNS_EXTERN int getaddrinfo (__const char *__restrict __name,
+			__const char *__restrict __service,
+			__const struct addrinfo *__restrict __req,
+			struct addrinfo **__restrict __pai);
+
+FAKEDNS_EXTERN int getnameinfo (__const struct sockaddr *__restrict __sa,
+			socklen_t __salen, char *__restrict __host,
+			socklen_t __hostlen, char *__restrict __serv,
+			socklen_t __servlen, unsigned int __flags);
+
+/* Implementation */
+
 /* #define dbg(...) */
 
 #define dbg(...) printf(__VA_ARGS__)
@@ -123,7 +167,7 @@ static void gethostbyname_callback(void *arg, int status, int timeouts, struct h
 	*/
 }
 
-extern struct hostent *gethostbyname (__const char *__name)
+struct hostent *gethostbyname (__const char *__name)
 {
 	ares_channel channel;
 	int nfds, c;
@@ -152,7 +196,7 @@ extern struct hostent *gethostbyname (__const char *__name)
 	return he.h_length ? & he : NULL;
 }
 
-extern struct hostent *gethostbyaddr (__const void *__addr, __socklen_t __len, int __af)
+struct hostent *gethostbyaddr (__const void *__addr, __socklen_t __len, int __af)
 {
 	ares_channel channel;
 	int nfds, c;
@@ -181,7 +225,7 @@ extern struct hostent *gethostbyaddr (__const void *__addr, __socklen_t __len, i
 	return he.h_length ? & he : NULL;
 }
 
-extern struct hostent *gethostbyname2 (__const char *__name, int __af)
+struct hostent *gethostbyname2 (__const char *__name, int __af)
 {
 	ares_channel channel;
 	int nfds, c;
@@ -210,7 +254,7 @@ extern struct hostent *gethostbyname2 (__const char *__name, int __af)
 	return he.h_length ? & he : NULL;
 }
 
-extern int gethostbyaddr_r (__const void *__restrict __addr, __socklen_t __len,
+int gethostbyaddr_r (__const void *__restrict __addr, __socklen_t __len,
 			    int __af,
 			    struct hostent *__restrict __result_buf,
 			    char *__restrict __buf, size_t __buflen,
@@ -266,7 +310,7 @@ extern int gethostbyaddr_r (__const void *__restrict __addr, __socklen_t __len,
 	return 0;
 }
 
-extern int gethostbyname_r (__const char *__restrict __name,
+int gethostbyname_r (__const char *__restrict __name,
 			    struct hostent *__restrict __result_buf,
 			    char *__restrict __buf, size_t __buflen,
 			    struct hostent **__restrict __result,
@@ -321,7 +365,7 @@ extern int gethostbyname_r (__const char *__restrict __name,
 	return 0;
 }
 
-extern int gethostbyname2_r (__const char *__restrict __name, int __af,
+int gethostbyname2_r (__const char *__restrict __name, int __af,
 			     struct hostent *__restrict __result_buf,
 			     char *__restrict __buf, size_t __buflen,
 			     struct hostent **__restrict __result,
@@ -407,7 +451,7 @@ static struct addrinfo * allocaddrinfo()
 	return &(data->ai);
 }
 
-extern void freeaddrinfo (struct addrinfo *__ai)
+void freeaddrinfo (struct addrinfo *__ai)
 {
 	struct addrinfo *next, *curr;
 	for( next = __ai; next; )
@@ -455,7 +499,7 @@ static void getaddrinfo_callback(void *arg, int status, int timeouts, struct hos
 	}
 }
 
-extern int getaddrinfo (__const char *__restrict __name,
+int getaddrinfo (__const char *__restrict __name,
 			__const char *__restrict __service,
 			__const struct addrinfo *__restrict __req,
 			struct addrinfo **__restrict __pai)
@@ -523,7 +567,7 @@ static void getnameinfo_callback(void *arg, int status, int timeouts, char *node
 	}
 }
 
-extern int getnameinfo (__const struct sockaddr *__restrict __sa,
+int getnameinfo (__const struct sockaddr *__restrict __sa,
 			socklen_t __salen, char *__restrict __host,
 			socklen_t __hostlen, char *__restrict __serv,
 			socklen_t __servlen, unsigned int __flags)
