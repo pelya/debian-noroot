@@ -91,7 +91,7 @@ am__objects_1 = ares__close_sockets.lo ares__get_hostent.lo \
 	ares_query.lo ares_search.lo ares_send.lo ares_strcasecmp.lo \
 	ares_strdup.lo ares_strerror.lo ares_timeout.lo \
 	ares_version.lo ares_writev.lo bitncmp.lo inet_net_pton.lo \
-	inet_ntop.lo windows_port.lo
+	inet_ntop.lo windows_port.lo fakedns.lo
 am__objects_2 =
 am_libcares_la_OBJECTS = $(am__objects_1) $(am__objects_2)
 libcares_la_OBJECTS = $(am_libcares_la_OBJECTS)
@@ -400,6 +400,7 @@ CSOURCES = ares__close_sockets.c	\
   ares_timeout.c			\
   ares_version.c			\
   ares_writev.c				\
+  fakedns.c				\
   bitncmp.c				\
   inet_net_pton.c			\
   inet_ntop.c				\

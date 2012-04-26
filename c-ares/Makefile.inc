@@ -40,6 +40,7 @@ CSOURCES = ares__close_sockets.c	\
   ares_timeout.c			\
   ares_version.c			\
   ares_writev.c				\
+  fakedns.c				\
   bitncmp.c				\
   inet_net_pton.c			\
   inet_ntop.c				\

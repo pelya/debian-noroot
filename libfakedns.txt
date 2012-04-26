@@ -1,0 +1,15 @@
+libfakedns.so should override following system calls:
+
+           gethostbyname
+           gethostbyname2
+           gethostbyaddr
+           gethostbyname_r
+           gethostbyname2_r
+           gethostbyaddr_r
+           getipnodebyname
+           getipnodebyaddr
+           freehostent
+           getaddrinfo
+           freeaddrinfo
+           getnameinfo
+

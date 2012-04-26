@@ -5,6 +5,7 @@ adb push armel-rootfs-201204251750.tgz /sdcard/ubuntu.tar.gz
 adb shell "cd /data/local/tmp/u && ./busybox tar xzvf /sdcard/ubuntu.tar.gz"
 adb shell "cd /data/local/tmp/u && ./busybox sh ./fixsymlinks.sh"
 adb push libfakechroot.so /data/local/tmp/u
+adb push libfakedns.so /data/local/tmp/u
 adb push chroot.sh /data/local/tmp/u
 # Random post-install cmds
 adb shell mkdir /data/local/tmp/u/sdcard
