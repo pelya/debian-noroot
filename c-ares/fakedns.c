@@ -22,6 +22,12 @@ It's licensed the same way as C-Ares lib is, if anyone cares about that.
 #include <errno.h>
 #include "ares.h"
 
+#define dbg(...)
+
+/*
+#define dbg(...) fprintf(stderr, __VA_ARGS__)
+*/
+
 /* Declarations */
 
 #define FAKEDNS_EXTERN  __attribute__((__visibility__("default")))
@@ -65,10 +71,6 @@ FAKEDNS_EXTERN int getnameinfo (__const struct sockaddr *__restrict __sa,
 			socklen_t __servlen, unsigned int __flags);
 
 /* Implementation */
-
-/* #define dbg(...) */
-
-#define dbg(...) printf(__VA_ARGS__)
 
 
 #if 0
@@ -462,11 +464,19 @@ void freeaddrinfo (struct addrinfo *__ai)
 	}
 }
 
+typedef struct {
+	struct addrinfo ** out;
+	in_port_t port;
+	int socktype;
+}
+getaddrinfo_callback_param;
+
 static void getaddrinfo_callback(void *arg, int status, int timeouts, struct hostent *host)
 {
 	char **p;
 	int i;
-	struct addrinfo ** out = (struct addrinfo **) arg;
+	getaddrinfo_callback_param * harg = (getaddrinfo_callback_param *) arg;
+	struct addrinfo ** out = harg->out;
 	struct addrinfo * data;
 
 	(void)timeouts;
@@ -488,14 +498,32 @@ static void getaddrinfo_callback(void *arg, int status, int timeouts, struct hos
 			data->ai_next = allocaddrinfo();
 			data = data->ai_next;
 		}
+		dbg("%s: '%s' %i AF %d addrlen %d\n", __FUNCTION__, host->h_name, i, host->h_addrtype, host->h_length);
 		strncpy(data->ai_canonname, host->h_name, HLEN);
 		data->ai_canonname[HLEN-1] = 0;
 		data->ai_family = host->h_addrtype;
-		data->ai_socktype = 0;
-		data->ai_protocol = host->h_addrtype;
+		data->ai_socktype = harg->socktype;
+		data->ai_protocol = 0;
 		data->ai_flags = 0;
-		data->ai_addrlen = host->h_length;
-		memcpy(data->ai_addr, host->h_addr_list[i], host->h_length);
+		data->ai_addrlen = host->h_length + sizeof(sa_family_t);
+		if( host->h_addrtype == AF_INET && host->h_length == sizeof(struct in_addr) )
+		{
+			struct sockaddr_in * addr = (struct sockaddr_in *)data->ai_addr;
+			addr->sin_family = AF_INET;
+			addr->sin_port = harg->port;
+			memcpy(&(addr->sin_addr), host->h_addr_list[i], host->h_length);
+			data->ai_addrlen = sizeof(struct sockaddr_in);
+		}
+		else if( host->h_addrtype == AF_INET6 && host->h_length == sizeof(struct in6_addr) )
+		{
+			struct sockaddr_in6 * addr = (struct sockaddr_in6 *)data->ai_addr;
+			addr->sin6_family = AF_INET6;
+			addr->sin6_port = harg->port;
+			memcpy(&(addr->sin6_addr), host->h_addr_list[i], host->h_length);
+			data->ai_addrlen = sizeof(struct sockaddr_in6);
+		}
+		else
+			memcpy(data->ai_addr+sizeof(sa_family_t), host->h_addr_list[i], host->h_length);
 	}
 }
 
@@ -509,10 +537,29 @@ int getaddrinfo (__const char *__restrict __name,
 	int nfds, c;
 	fd_set read_fds, write_fds;
 	struct timeval *tvp, tv;
+	struct addrinfo * data;
+	getaddrinfo_callback_param harg = { __pai, __service ? htons(atoi(__service)) : 0, __req ? __req->ai_socktype : 0 };
+	dbg("%s: '%s':'%s'\n", __FUNCTION__, __name, __service);
 
-	dbg("%s\n", __FUNCTION__);
+	if(__service && harg.port == 0)
+	{
+		struct servent * serv = getservbyname(__service, NULL);
+		if(serv)
+		{
+			dbg("%s: getservbyname: '%s':%d:'%s'\n", __FUNCTION__, serv->s_name, (int)ntohs(serv->s_port), serv->s_proto);
+			harg.port = serv->s_port;
+			if( harg.socktype == 0 )
+			{
+				if( strcmp( serv->s_proto, "tcp" ) == 0 )
+					harg.socktype = SOCK_STREAM;
+				if( strcmp( serv->s_proto, "udp" ) == 0 )
+					harg.socktype = SOCK_DGRAM;
+			}
+		}
+	}
+
 	aresInit(&channel);
-	ares_gethostbyname(channel, __name, __req ? __req->ai_family : AF_INET, getaddrinfo_callback, __pai);
+	ares_gethostbyname(channel, __name, __req ? __req->ai_family : AF_INET, getaddrinfo_callback, &harg);
 	
 	for (;;)
 	{
@@ -528,9 +575,9 @@ int getaddrinfo (__const char *__restrict __name,
 	
 	ares_destroy(channel);
 	
-	if (! (*__pai) )
+	if (! (*harg.out) )
 		return EAI_FAIL;
-	(*__pai)->ai_socktype = __req ? __req->ai_socktype : 0;
+	
 	return 0;
 }
 
@@ -555,12 +602,14 @@ static void getnameinfo_callback(void *arg, int status, int timeouts, char *node
 	}
 	out->ret = 0;
 
-	if(out->host)
+	dbg("%s: %s:%s\n", __FUNCTION__, node, service);
+
+	if(out->host && node)
 	{
 		strncpy(out->host, node, out->hostlen);
 		out->host[out->hostlen-1] = 0;
 	}
-	if(out->serv)
+	if(out->serv && service)
 	{
 		strncpy(out->serv, service, out->servlen);
 		out->serv[out->servlen-1] = 0;
