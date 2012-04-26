@@ -643,6 +643,7 @@ class DataDownloader extends Thread
 		if( fakechroot == null ) {
 			try {
 				Status.setText( "Launching Ubuntu" );
+
 				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./chroot.sh", "./startx.sh");
 				Map<String, String> env = pb.environment();
 				int w = Parent.getWindowManager().getDefaultDisplay().getWidth();
@@ -650,6 +651,25 @@ class DataDownloader extends Thread
 				env.put("DISPLAY_RESOLUTION", String.valueOf(w) + "x" + String.valueOf(h));
 				pb.directory(new File(Parent.getFilesDir().getAbsolutePath()));
 				fakechroot = pb.start();
+
+				// --- DEBUG ---
+				/*
+				String lines = "";
+				byte buf[] = new byte[1];
+				InputStream log = fakechroot.getErrorStream();
+				int len = 0;
+				while(len >= 0)
+				{
+					len = log.read(buf);
+					if(len > 0)
+					{
+						lines += new String(buf, 0, len, "UTF-8");
+						Status.setText( lines );
+					}
+				}
+				*/
+				// --- DEBUG ---
+
 				Thread.sleep(5000);
 			} catch ( Exception e ) {
 				Status.setText( "Error: " + e.toString() );
@@ -658,7 +678,7 @@ class DataDownloader extends Thread
 			}
 		}
 		
-		Status.setText( "Connecting to Ubuntu" );
+		//Status.setText( "Connecting to Ubuntu" );
 		class Callback implements Runnable
 		{
 			public androidVNC Parent;
