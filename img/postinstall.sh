@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-cat $SDCARD/download/download/busybox > busybox
+cat $SDCARD/download/busybox > busybox
 chmod 755 busybox
 ./busybox tar xzvf $SDCARD/download/ubuntu.tar.gz
 rm $SDCARD/download/ubuntu.tar.gz

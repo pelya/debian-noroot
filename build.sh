@@ -17,6 +17,7 @@ cd androidVNC/ZoomerWithKeys
 [ -e local.properties ] || android update project -p . || fail
 ant debug || fail
 cd ../androidVNC
+rm -rf bin/*
 [ -e local.properties ] || android update project -p . || fail
 ant debug && cp -f bin/Ubuntu-debug.apk ../.. || fail
 cd ../..

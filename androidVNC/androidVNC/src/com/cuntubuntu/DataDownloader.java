@@ -58,6 +58,10 @@ import android.content.res.Resources;
 import java.lang.String;
 import android.text.SpannedString;
 import java.util.Map;
+import android.os.Environment;
+import android.os.StatFs;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 
 class CountingInputStream extends BufferedInputStream {
@@ -185,10 +189,47 @@ class DataDownloader extends Thread
 	@Override
 	public void run()
 	{
+		String intFs = Parent.getFilesDir().getAbsolutePath() + "/";
+		if ( (new File(intFs + "chroot.sh").exists()) ) {
+			DownloadComplete = true;
+			initParent();
+			return;
+		}
+
 		String [] downloadFiles = {
-			"Fakechroot and busybox|http://sourceforge.net/projects/libsdl-android/files/ubuntu/fakechroot-00.zip/download",
-			"Ubuntu image|:ubuntu.tar.gz:http://sourceforge.net/projects/libsdl-android/files/ubuntu/precise-armel-00.tgz/download"
+			"Fakechroot and busybox|http://sourceforge.net/projects/libsdl-android/files/ubuntu/fakechroot-01.zip/download",
+			"Ubuntu image|:ubuntu.tar.gz:http://sourceforge.net/projects/libsdl-android/files/ubuntu/armel_precise_ubuntu-minimal,xfce4,fakeroot,fakechroot,tightvncserver,synaptic-20120424.tgz/download"
 		};
+		
+		StatFs phone = new StatFs(Environment.getDataDirectory().getPath());
+		long freePhone = (long)phone.getAvailableBlocks() * phone.getBlockSize() / 1024 / 1024;
+		if(freePhone < 500)
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(Parent);
+			builder.setTitle("Not enough data storage");
+			builder.setMessage("500 Mb internal sorage required, you have only " + freePhone + " Mb");
+			builder.setPositiveButton("Install", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int item) {
+					dialog.dismiss();
+				}
+			});
+			builder.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int item) {
+					dialog.dismiss();
+					System.exit(0);
+				}
+			});
+			builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+				public void onCancel(DialogInterface dialog)
+				{
+					System.exit(0);
+				}
+			});
+			AlertDialog alert = builder.create();
+			alert.setOwnerActivity(Parent);
+			alert.show();
+		}
+		
 		int count = 0;
 		for( int i = 0; i < downloadFiles.length; i++ )
 		{
@@ -571,7 +612,7 @@ class DataDownloader extends Thread
 			Runtime.getRuntime().exec("mkdir " + intFs).waitFor();
 			copyFile(getOutFilePath("postinstall.sh"), intFs + "postinstall.sh");
 			Runtime.getRuntime().exec("chmod 755 " + intFs + "postinstall.sh").waitFor();
-			ProcessBuilder pb = new ProcessBuilder("./postinstall.sh");
+			ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./postinstall.sh");
 			Map<String, String> env = pb.environment();
 			env.put("SDCARD", Environment.getExternalStorageDirectory().getAbsolutePath());
 			pb.directory(new File(Parent.getFilesDir().getAbsolutePath()));
@@ -602,7 +643,7 @@ class DataDownloader extends Thread
 		if( fakechroot == null ) {
 			try {
 				Status.setText( "Launching Ubuntu" );
-				ProcessBuilder pb = new ProcessBuilder("./chroot.sh ./startx.sh");
+				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./chroot.sh", "./startx.sh");
 				Map<String, String> env = pb.environment();
 				int w = Parent.getWindowManager().getDefaultDisplay().getWidth();
 				int h = Parent.getWindowManager().getDefaultDisplay().getHeight();
