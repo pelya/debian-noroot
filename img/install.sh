@@ -1,7 +1,7 @@
 adb shell mkdir /data/local/tmp/u
 adb push busybox /data/local/tmp/u
 adb push fixsymlinks.sh /data/local/tmp/u
-adb push armel-precise-ubuntu-minimal,lxde,fakeroot,fakechroot,tightvncserver,synaptic,wget-20120425.tgz /sdcard/ubuntu.tar.gz
+adb push armel-rootfs-201204251750.tgz /sdcard/ubuntu.tar.gz
 adb shell "cd /data/local/tmp/u && ./busybox tar xzvf /sdcard/ubuntu.tar.gz"
 adb shell "cd /data/local/tmp/u && ./busybox sh ./fixsymlinks.sh"
 adb push libfakechroot.so /data/local/tmp/u
