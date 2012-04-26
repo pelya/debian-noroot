@@ -1,9 +1,10 @@
+Run Ubuntu on top of Android with a single click.
+=================================================
 
-Ubuntu running on top of Android, without rooting your phone.
-=============================================================
+No root required! You will need 500 Mb of internal storage (it cannot be installed to SD card).
 
-This is NOT full Ubuntu OS, however it allows you to run substantial amount of applications provided by the Ubuntu package manager.
-It requires 500 Mb internal device data storage (not SD card),
+This app is NOT full Ubuntu OS - it is a compatibility layer, which allows you to run some Ubuntu applications.
+Also, this is not official ubuntu.com release.
 
 There are several limitations:
 
@@ -15,8 +16,8 @@ There are several limitations:
 - No access to the device hardware. That means you cannot re-partition SD card, you cannot burn CD-Roms, you cannot sniff your network etc.
 - No camera support. It's possible to add, however not worth the effort - I don't know any Ubuntu apps that use camera (except for Skype, but it's already available as a native app).
 - No multitouch support - this is a limitation of Ubuntu itself.
-- Whole image resides in your device internal memory, which is very limited, because Android does not allow executable code to be run from SD card.
-This may be partially fixed by moving /usr/share to SD card (although it contains symlinks, and SD card does not support those).
+- No ability to move app to SD card. This can be improved by offloading non-executable files to SD card with a symlink, and packing executables with UPX.
+- No pseudo-terminal support, so XTerm and many utilities do not work.
 
 How does that work.
 ===================

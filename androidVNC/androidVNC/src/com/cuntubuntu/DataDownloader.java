@@ -186,8 +186,8 @@ class DataDownloader extends Thread
 	public void run()
 	{
 		String [] downloadFiles = {
-			"Fakechroot and busybox|http://sourceforge.net/projects/libsdl-android/files/ubuntu/fakechroot.zip/download",
-			"Ubuntu image|:ubuntu.tar.gz:http://sourceforge.net/projects/libsdl-android/files/ubuntu/armel_precise_ubuntu-minimal%2Cxfce4%2Cfakeroot%2Cfakechroot%2Ctightvncserver%2Csynaptic-20120424.tgz/download"
+			"Fakechroot and busybox|http://sourceforge.net/projects/libsdl-android/files/ubuntu/fakechroot-00.zip/download",
+			"Ubuntu image|:ubuntu.tar.gz:http://sourceforge.net/projects/libsdl-android/files/ubuntu/precise-armel-00.tgz/download"
 		};
 		int count = 0;
 		for( int i = 0; i < downloadFiles.length; i++ )
@@ -568,17 +568,14 @@ class DataDownloader extends Thread
 		String intFs = Parent.getFilesDir().getAbsolutePath() + "/";
 		if ( ! (new File(intFs + "chroot.sh").exists()) ) {
 		try {
-			System.out.println( "mkdir " + intFs );
 			Runtime.getRuntime().exec("mkdir " + intFs).waitFor();
-			System.out.println( "copy " + getOutFilePath("busybox") + " -> " + intFs + "busybox");
-			copyFile(getOutFilePath("busybox"), intFs + "busybox");
-			System.out.println( "chmod 755 " + intFs + "busybox" );
-			Runtime.getRuntime().exec("chmod 755 " + intFs + "busybox").waitFor();
-			System.out.println( "rm " + getOutFilePath("busybox") );
-			Runtime.getRuntime().exec("rm " + getOutFilePath("busybox")).waitFor();
-			Status.setText( "Extracting Ubuntu image..." );
-			System.out.println( intFs + "busybox tar -x -v -C " + intFs + " -f " + getOutFilePath("ubuntu.tar.gz") );
-			Process p = Runtime.getRuntime().exec(intFs + "busybox tar -x -v -C " + intFs + " -f " + getOutFilePath("ubuntu.tar.gz"));
+			copyFile(getOutFilePath("postinstall.sh"), intFs + "postinstall.sh");
+			Runtime.getRuntime().exec("chmod 755 " + intFs + "postinstall.sh").waitFor();
+			ProcessBuilder pb = new ProcessBuilder("./postinstall.sh");
+			Map<String, String> env = pb.environment();
+			env.put("SDCARD", Environment.getExternalStorageDirectory().getAbsolutePath());
+			pb.directory(new File(Parent.getFilesDir().getAbsolutePath()));
+			Process p = pb.start();
 			byte buf[] = new byte[2048];
 			InputStream log = p.getInputStream();
 			int len = 0;
@@ -593,23 +590,6 @@ class DataDownloader extends Thread
 				len = log.read(buf);
 			}
 			p.waitFor();
-			Runtime.getRuntime().exec("rm " + getOutFilePath("ubuntu.tar.gz")).waitFor();
-			System.out.println( "copy " + getOutFilePath("libfakechroot.so") + " -> " + intFs + "libfakechroot.so");
-			copyFile(getOutFilePath("libfakechroot.so"), intFs + "libfakechroot.so");
-			System.out.println( "chmod 755 " + intFs + "libfakechroot.so" );
-			Runtime.getRuntime().exec("chmod 755 " + intFs + "libfakechroot.so" ).waitFor();
-			System.out.println( "mkdir " + intFs + "root" );
-			System.out.println( "mkdir " + intFs + "root/.vnc" );
-			System.out.println( "copy " + getOutFilePath("passwd") + " -> " + intFs + "root/.vnc/passwd");
-			copyFile(getOutFilePath("passwd"), intFs + "root/.vnc/passwd");
-			Runtime.getRuntime().exec("chmod 600 " + intFs + "root/.vnc/passwd" ).waitFor();
-			System.out.println( "copy " + getOutFilePath("xstartup") + " -> " + intFs + "root/.vnc/xstartup");
-			copyFile(getOutFilePath("xstartup"), intFs + "root/.vnc/xstartup");
-			Runtime.getRuntime().exec("chmod 755 " + intFs + "root/.vnc/xstartup" ).waitFor();
-			System.out.println( "copy " + getOutFilePath("chroot.sh") + " -> " + intFs + "chroot.sh");
-			copyFile(getOutFilePath("chroot.sh"), intFs + "chroot.sh");
-			System.out.println( "chmod 755 " + intFs + "chroot.sh" );
-			Runtime.getRuntime().exec("chmod 755 " + intFs + "chroot.sh" ).waitFor();
 			Status.setText( "Extracting finished" );
 			System.out.println( "Extracting finished" );
 		} catch ( Exception e ) {
@@ -622,12 +602,11 @@ class DataDownloader extends Thread
 		if( fakechroot == null ) {
 			try {
 				Status.setText( "Launching Ubuntu" );
-				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh ./chroot.sh");
+				ProcessBuilder pb = new ProcessBuilder("./chroot.sh ./startx.sh");
 				Map<String, String> env = pb.environment();
 				int w = Parent.getWindowManager().getDefaultDisplay().getWidth();
 				int h = Parent.getWindowManager().getDefaultDisplay().getHeight();
 				env.put("DISPLAY_RESOLUTION", String.valueOf(w) + "x" + String.valueOf(h));
-				env.put("USER", "root");
 				pb.directory(new File(Parent.getFilesDir().getAbsolutePath()));
 				fakechroot = pb.start();
 				Thread.sleep(5000);
