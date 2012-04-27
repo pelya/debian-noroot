@@ -675,14 +675,18 @@ class DataDownloader extends Thread
 		}
 		}
 
-		if( fakechroot == null ) {
+		if( fakechroot == null )
+		{
 			try {
 				Status.setText( "Launching Ubuntu" );
 
 				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./chroot.sh", "./startx.sh");
 				Map<String, String> env = pb.environment();
-				int w = Parent.getWindowManager().getDefaultDisplay().getWidth();
-				int h = Parent.getWindowManager().getDefaultDisplay().getHeight();
+				int w1 = Parent.getWindowManager().getDefaultDisplay().getWidth();
+				int h1 = Parent.getWindowManager().getDefaultDisplay().getHeight();
+				int w = Math.max(w1, h1);
+				int h = Math.min(w1, h1);
+				System.out.println( "Display resolution: " + String.valueOf(w) + "x" + String.valueOf(h) );
 				env.put("DISPLAY_RESOLUTION", String.valueOf(w) + "x" + String.valueOf(h));
 				pb.directory(new File(Parent.getFilesDir().getAbsolutePath()));
 				fakechroot = pb.start();

@@ -28,6 +28,7 @@ How does that work.
 ===================
 
 The Ubuntu shell is launched via the "fakechroot" command, it starts Xvnc server, and connects with androidVNC client.
+See the script dist/chroot.sh for details.
 
 Compilation.
 ============
