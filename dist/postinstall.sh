@@ -3,7 +3,6 @@
 cat $SDCARD/download/busybox > busybox
 chmod 755 busybox
 ./busybox tar xzvf $SDCARD/download/ubuntu.tar.gz
-rm $SDCARD/download/ubuntu.tar.gz
 cat $SDCARD/download/fixsymlinks.sh > fixsymlinks.sh
 chmod 755 fixsymlinks.sh
 ./busybox sh ./fixsymlinks.sh
@@ -27,3 +26,5 @@ chmod 755 startx.sh
 
 cat $SDCARD/download/chroot.sh > chroot.sh
 chmod 755 chroot.sh
+
+rm $SDCARD/download/ubuntu.tar.gz

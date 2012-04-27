@@ -609,30 +609,43 @@ class DataDownloader extends Thread
 		String intFs = Parent.getFilesDir().getAbsolutePath() + "/";
 		if ( ! (new File(intFs + "chroot.sh").exists()) ) {
 		try {
-			Runtime.getRuntime().exec("mkdir " + intFs).waitFor();
-			copyFile(getOutFilePath("postinstall.sh"), intFs + "postinstall.sh");
-			Runtime.getRuntime().exec("chmod 755 " + intFs + "postinstall.sh").waitFor();
-			ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./postinstall.sh");
-			Map<String, String> env = pb.environment();
-			env.put("SDCARD", Environment.getExternalStorageDirectory().getAbsolutePath());
-			pb.directory(new File(Parent.getFilesDir().getAbsolutePath()));
-			Process p = pb.start();
-			byte buf[] = new byte[2048];
-			InputStream log = p.getInputStream();
-			int len = 0;
-			while(len >= 0)
+			if( postinstall != null )
 			{
-				if(len > 0)
+				Status.setText( "Waiting for install script to finish" );
+				while( ! (new File(intFs + "chroot.sh").exists()) )
 				{
-					String lines[] = new String(buf, 0, len, "UTF-8").split("\n");
-					if(lines.length > 1)
-						Status.setText( "Extracting " + lines[1] );
+					try {
+						Thread.sleep(1000);
+					} catch ( Exception e ) {}
 				}
-				len = log.read(buf);
 			}
-			p.waitFor();
-			Status.setText( "Extracting finished" );
-			System.out.println( "Extracting finished" );
+			else
+			{
+				Runtime.getRuntime().exec("mkdir " + intFs).waitFor();
+				copyFile(getOutFilePath("postinstall.sh"), intFs + "postinstall.sh");
+				Runtime.getRuntime().exec("chmod 755 " + intFs + "postinstall.sh").waitFor();
+				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./postinstall.sh");
+				Map<String, String> env = pb.environment();
+				env.put("SDCARD", Environment.getExternalStorageDirectory().getAbsolutePath());
+				pb.directory(new File(Parent.getFilesDir().getAbsolutePath()));
+				postinstall = pb.start();
+				byte buf[] = new byte[2048];
+				InputStream log = postinstall.getInputStream();
+				int len = 0;
+				while(len >= 0)
+				{
+					if(len > 0)
+					{
+						String lines[] = new String(buf, 0, len, "UTF-8").split("\n");
+						if(lines.length > 1)
+							Status.setText( "Extracting " + lines[1] );
+					}
+					len = log.read(buf);
+				}
+				postinstall.waitFor();
+				Status.setText( "Extracting finished" );
+				System.out.println( "Extracting finished" );
+			}
 		} catch ( Exception e ) {
 			Status.setText( "Error: " + e.toString() );
 			System.out.println( "Extracting files error: " + e.toString() );
@@ -729,6 +742,7 @@ class DataDownloader extends Thread
 	private String outFilesDir = null;
 
 	private static Process fakechroot = null;
+	private static Process postinstall = null;
 
   static void copyFile(String srFile, String dtFile) {
   try{
