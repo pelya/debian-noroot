@@ -2,7 +2,7 @@
 <resources>
     <string name="address_caption">Address</string>
     <string name="alt_check">Alt</string>
-    <string name="app_name">Ubuntu fakechroot</string>
+    <string name="app_name">Ubuntu noroot</string>
     <string name="arrow_down">Down Arrow</string>
     <string name="arrow_left">Left Arrow</string>
     <string name="arrow_right">Right Arrow</string>
