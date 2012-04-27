@@ -62,6 +62,7 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import java.util.concurrent.Semaphore;
 
 
 class CountingInputStream extends BufferedInputStream {
@@ -205,12 +206,14 @@ class DataDownloader extends Thread
 		long freePhone = (long)phone.getAvailableBlocks() * phone.getBlockSize() / 1024 / 1024;
 		if(freePhone < 500)
 		{
-			AlertDialog.Builder builder = new AlertDialog.Builder(Parent);
+			final AlertDialog.Builder builder = new AlertDialog.Builder(Parent);
+			final Semaphore proceed = new Semaphore(0);
 			builder.setTitle("Not enough data storage");
 			builder.setMessage("500 Mb internal sorage required, you have only " + freePhone + " Mb");
 			builder.setPositiveButton("Install", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
 					dialog.dismiss();
+					proceed.release();
 				}
 			});
 			builder.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
@@ -225,9 +228,24 @@ class DataDownloader extends Thread
 					System.exit(0);
 				}
 			});
-			AlertDialog alert = builder.create();
-			alert.setOwnerActivity(Parent);
-			alert.show();
+			class Callback implements Runnable
+			{
+				public androidVNC Parent;
+				public void run()
+				{
+					AlertDialog alert = builder.create();
+					alert.setOwnerActivity(Parent);
+					alert.show();
+				}
+			}
+			Callback cb = new Callback();
+			cb.Parent = Parent;
+			if(Parent != null)
+				Parent.runOnUiThread(cb);
+			
+			try {
+				proceed.acquire();
+			} catch ( Exception e ) {}
 		}
 		
 		int count = 0;
