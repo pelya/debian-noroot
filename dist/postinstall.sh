@@ -22,6 +22,8 @@ cat $SDCARD/download/passwd > root/.vnc/passwd
 mkdir root/Desktop
 cat $SDCARD/download/Synaptic.desktop > root/Desktop/Synaptic.desktop
 chmod 644 root/Desktop/Synaptic.desktop
+cat $SDCARD/download/New%20shortcut.desktop > root/Desktop/New%20shortcut.desktop
+chmod 644 root/Desktop/New%20shortcut.desktop
 ln -s `pwd`/usr/bin/dbus-launch `pwd`/bin/dbus-launch
 echo nameserver 8.8.8.8 > etc/resolv.conf
 echo nameserver 8.8.4.4 >> etc/resolv.conf

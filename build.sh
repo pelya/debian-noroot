@@ -21,3 +21,6 @@ rm -rf bin/*
 [ -e local.properties ] || android update project -p . || fail
 ant debug && cp -f bin/Ubuntu-debug.apk ../.. || fail
 cd ../..
+cd dist
+zip ../fakechroot-01.zip *
+cd ..

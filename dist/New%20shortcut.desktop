@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=New shortcut
+Comment=
+Exec=exo-desktop-item-edit -c -t Application /root/Desktop
+Icon=
+Path=
+Terminal=false
+StartupNotify=false
