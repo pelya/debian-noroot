@@ -199,7 +199,7 @@ class DataDownloader extends Thread
 
 		String [] downloadFiles = {
 			"Fakechroot and busybox|http://sourceforge.net/projects/libsdl-android/files/ubuntu/fakechroot-01.zip/download",
-			"Ubuntu image|:ubuntu.tar.gz:http://sourceforge.net/projects/libsdl-android/files/ubuntu/armel_precise_ubuntu-minimal,xfce4,fakeroot,fakechroot,tightvncserver,synaptic-20120424.tgz/download"
+			"Ubuntu image|:ubuntu.tar.gz:http://sourceforge.net/projects/libsdl-android/files/ubuntu/armel-rootfs-201204262226.tgz/download"
 		};
 		
 		StatFs phone = new StatFs(Environment.getDataDirectory().getPath());

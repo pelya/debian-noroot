@@ -13,12 +13,15 @@ chmod 755 libfakechroot.so
 cat $SDCARD/download/libfakedns.so > libfakedns.so
 chmod 755 libfakedns.so
 # Random post-install cmds
+mkdir run/dbus
+mkdir run/xauth
 mkdir sdcard
 mkdir root
 mkdir root/.vnc
 cat $SDCARD/download/passwd > root/.vnc/passwd
 mkdir root/Desktop
-cat $SDCARD/download/synaptic-kde.desktop > root/Desktop/synaptic-kde.desktop
+cat $SDCARD/download/Synaptic.desktop > root/Desktop/Synaptic.desktop
+chmod 644 root/Desktop/Synaptic.desktop
 ln -s `pwd`/usr/bin/dbus-launch `pwd`/bin/dbus-launch
 echo nameserver 8.8.8.8 > etc/resolv.conf
 echo nameserver 8.8.4.4 >> etc/resolv.conf
