@@ -269,8 +269,9 @@ class DataDownloader extends Thread
 			return false;
 		
 		Resources res = Parent.getResources();
-
 		String path = getOutFilePath(DownloadFlagFileName);
+
+		/*
 		InputStream checkFile = null;
 		try {
 			checkFile = new FileInputStream( path );
@@ -294,6 +295,7 @@ class DataDownloader extends Thread
 			} catch ( IOException e ) {};
 		}
 		checkFile = null;
+		*/
 		
 		// Create output directory (not necessary for phone storage)
 		System.out.println("Downloading data to: '" + outFilesDir + "'");
@@ -597,6 +599,7 @@ class DataDownloader extends Thread
 			}
 		};
 
+		/*
 		OutputStream out = null;
 		path = getOutFilePath(DownloadFlagFileName);
 		try {
@@ -610,6 +613,7 @@ class DataDownloader extends Thread
 			Status.setText( res.getString(R.string.error_write, path) );
 			return false;
 		};
+		*/
 		Status.setText( downloadCount + "/" + downloadTotal + ": " + res.getString(R.string.dl_finished) );
 
 		try {

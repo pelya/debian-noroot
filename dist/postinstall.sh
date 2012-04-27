@@ -1,5 +1,7 @@
 #!/system/bin/sh
 
+case x$SDCARD in x ) export SDCARD=$EXTERNAL_STORAGE;; esac
+
 cat $SDCARD/download/busybox > busybox
 chmod 755 busybox
 ./busybox tar xzvf $SDCARD/download/ubuntu.tar.gz
