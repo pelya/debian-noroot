@@ -203,7 +203,7 @@ class DataDownloader extends Thread
 
 		String [] downloadFiles = {
 			"GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp.zip/download",
-			"Office suite - AbiWord and Gnumeric|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office.zip/download"
+			"Office suite - AbiWord and Gnumeric (and GIMP)|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office.zip/download"
 		};
 		int [] freeSpaceRequired = {
 			180,
@@ -680,7 +680,6 @@ class DataDownloader extends Thread
 	
 	private void initParent()
 	{
-		downloadingInProcess = true;
 		String intFs = Parent.getFilesDir().getAbsolutePath() + "/";
 		
 		if( upgrading && postinstall == null )
