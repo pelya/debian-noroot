@@ -179,6 +179,7 @@ class DataDownloader extends Thread
 		Status.setText( "Initializing download" );
 		outFilesDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ubuntu";
 		DownloadComplete = false;
+		upgrading = checkUpgrading();
 		this.start();
 	}
 	
@@ -193,7 +194,7 @@ class DataDownloader extends Thread
 	public void run()
 	{
 		String intFs = Parent.getFilesDir().getAbsolutePath() + "/";
-		if ( downloadingInProcess ) {
+		if ( downloadingInProcess || ((new File(intFs + "chroot.sh").exists()) && !upgrading) ) {
 			if( (new File(intFs + "chroot.sh").exists()) )
 				DownloadComplete = true;
 			initParent();
@@ -205,9 +206,10 @@ class DataDownloader extends Thread
 			"LibreOffice suite|http://sourceforge.net/projects/libsdl-android/files/ubuntu/natty-office.zip/download"
 		};
 		int [] freeSpaceRequired = { 120, 270 };
-		int installOption = 0;
+		int installOption = 1;
 		final int [] installOption2 = {0}; // To circumvent assignment to final variable
 
+		if(false) // apt, synaptic and xfdesktop are broken in Natty, so libreoffice is the only useful app around
 		{
 			final AlertDialog.Builder builder = new AlertDialog.Builder(Parent);
 			final Semaphore proceed = new Semaphore(0);
@@ -565,7 +567,12 @@ class DataDownloader extends Thread
 					if( !(outDir.exists() && outDir.isDirectory()) )
 						outDir.mkdirs();
 				} catch( SecurityException e ) { };
-				
+
+				float percent = 0.0f;
+				if( totalLen > 0 )
+					percent = stream.getBytesRead() * 100.0f / totalLen;
+				Status.setText( downloadCount + "/" + downloadTotal + ": " + res.getString(R.string.dl_progress, percent, path) );
+
 				try {
 					CheckedInputStream check = new CheckedInputStream( new FileInputStream(path), new CRC32() );
 					while( check.read(buf, 0, buf.length) >= 0 ) {};
@@ -594,11 +601,6 @@ class DataDownloader extends Thread
 					return false;
 				}
 
-				float percent = 0.0f;
-				if( totalLen > 0 )
-					percent = stream.getBytesRead() * 100.0f / totalLen;
-				Status.setText( downloadCount + "/" + downloadTotal + ": " + res.getString(R.string.dl_progress, percent, path) );
-				
 				try {
 					int len = zip.read(buf);
 					while (len >= 0)
@@ -678,19 +680,14 @@ class DataDownloader extends Thread
 		downloadingInProcess = true;
 		String intFs = Parent.getFilesDir().getAbsolutePath() + "/";
 		
-		try {
-			ObjectInputStream version = new ObjectInputStream(new FileInputStream( intFs + "version" ));
-			if( version.readInt() != getApplicationVersion() )
-				throw new IOException();
-			version.close();
-		} catch ( Exception e ) {
+		if( upgrading && postinstall == null )
+		{
 			Status.setText( "Removing previous installation..." );
 			System.out.println( "Removing previous installation..." );
-			if( postinstall == null )
-				deleteRecursive(new File(Parent.getFilesDir().getAbsolutePath()));
+			deleteRecursive(new File(Parent.getFilesDir().getAbsolutePath()));
 		}
 
-		if ( ! (new File(intFs + "chroot.sh").exists()) ) {
+		if ( ! (new File(intFs + "chroot.sh").exists()) || upgrading ) {
 
 		Status.setText( "Extracting files..." );
 		System.out.println( "Extracting files..." );
@@ -735,7 +732,7 @@ class DataDownloader extends Thread
 				System.out.println( "Extracting finished" );
 
 				try {
-					ObjectOutputStream version = new ObjectOutputStream(Parent.openFileOutput( intFs + "version", Parent.MODE_WORLD_READABLE ));
+					ObjectOutputStream version = new ObjectOutputStream(new FileOutputStream( intFs + "version" ));
 					version.writeInt(getApplicationVersion());
 					version.close();
 				} catch ( Exception e ) {};
@@ -753,7 +750,7 @@ class DataDownloader extends Thread
 			try {
 				Status.setText( "Launching Ubuntu" );
 
-				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./chroot.sh", "./startx.sh");
+				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./chroot.sh", "bin/sh", "./startx.sh");
 				Map<String, String> env = pb.environment();
 				int w1 = Parent.getWindowManager().getDefaultDisplay().getWidth();
 				int h1 = Parent.getWindowManager().getDefaultDisplay().getHeight();
@@ -844,6 +841,7 @@ class DataDownloader extends Thread
 	private static Process fakechroot = null;
 	private static Process postinstall = null;
 	private static boolean downloadingInProcess = false;
+	private static boolean upgrading = false;
 
   static void copyFile(String srFile, String dtFile) {
   try{
@@ -890,6 +888,19 @@ class DataDownloader extends Thread
 			System.out.println("libSDL: Cannot get the version of our own package: " + e);
 		}
 		return 0;
+	}
+
+	public boolean checkUpgrading()
+	{
+		try {
+			ObjectInputStream version = new ObjectInputStream(new FileInputStream( Parent.getFilesDir().getAbsolutePath() + "/version" ));
+			if( version.readInt() != getApplicationVersion() )
+				throw new IOException();
+			version.close();
+			return false;
+		} catch ( Exception e ) {
+		}
+		return true;
 	}
 
 }

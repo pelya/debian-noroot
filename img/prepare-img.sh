@@ -38,6 +38,18 @@ find -type d | sed 's@^[.]/@@' | while read F; do
 	[ -z "`find $F -type c`" ] || continue
 	[ -z "`find $F -type f -exec file {} \; | grep 'ELF 32'`" ] || continue
 	[ -z "`find $F -type f | grep '[:\"*:<>?\\|]'`" ] || continue
+	[ -z "`echo $F | grep '^var'`" ] || continue
+	[ -z "`echo $F | grep '^tmp'`" ] || continue
+	[ -z "`echo $F | grep '^run'`" ] || continue
+
+	echo "Moving dir $F"
+	ESCAPED=`echo "$F" | tr ':"*:<>?\\|' '----------'`
+	mkdir -p "`dirname ../$DIST-sd/$ESCAPED`"
+	mv "$F" "../$DIST-sd/$ESCAPED"
+	ln -s "/data/data/$PKGNAME/files/sd/$ESCAPED" "$F"
+done
+
+for F in var/cache/apt var/lib/apt var/cache/debconf ; do
 	echo "Moving dir $F"
 	ESCAPED=`echo "$F" | tr ':"*:<>?\\|' '----------'`
 	mkdir -p "`dirname ../$DIST-sd/$ESCAPED`"
@@ -48,6 +60,10 @@ done
 echo "Offloading files to SD card"
 
 find -type f -executable -o -type f -size "+4k" -exec file {} \; | grep -v 'ELF 32' | sed 's@^\([^ ]*\): .*@\1@' | sed 's@^[.]/@@' | while read F; do
+	[ -z "`echo $F | grep '^var'`" ] || continue
+	[ -z "`echo $F | grep '^tmp'`" ] || continue
+	[ -z "`echo $F | grep '^run'`" ] || continue
+
 	echo "$F" > /dev/stderr
 	ESCAPED=`echo "$F" | tr ':"*:<>?\\|' '----------'`
 	mkdir -p "`dirname ../$DIST-sd/$ESCAPED`"

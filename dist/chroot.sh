@@ -14,6 +14,9 @@ export LD_LIBRARY_PATH=:`pwd`/lib:`pwd`/lib/arm-linux-gnueabi:`pwd`/lib/arm-linu
 export "LD_PRELOAD=`pwd`/libfakechroot.so `pwd`/libfakedns.so"
 export FAKECHROOT_EXCLUDE_PATH=/dev:/proc:/sys:$SDCARD_ROOT
 export FAKECHROOT_ELFLOADER=`pwd`/lib/ld-linux.so.3
+export FAKECHROOT_BASE=`pwd`
+#FAKECHROOT_CMD_SUBST=/usr/sbin/chroot=`pwd`/usr/sbin/chroot.fakechroot:
+export FAKECHROOT_CMD_SUBST=/sbin/ldconfig=`pwd`/bin/true:/usr/bin/ischroot=`pwd`/bin/true:/usr/bin/ldd=`pwd`/usr/bin/ldd.fakechroot
 export PATH=`pwd`/usr/local/sbin:`pwd`/usr/local/bin:`pwd`/usr/sbin:`pwd`/usr/bin:`pwd`/sbin:`pwd`/bin:`pwd`/usr/games:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
 export DISPLAY=:1111
 export HOME=/root
@@ -21,4 +24,4 @@ export USER=root
 export TMPDIR=/tmp
 export SHELL=/bin/bash
 export TERM=linux
-lib/ld-linux.so.3 usr/sbin/chroot `pwd` fakeroot $*
+lib/ld-linux.so.3 $*
