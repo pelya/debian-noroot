@@ -203,11 +203,11 @@ class DataDownloader extends Thread
 
 		String [] downloadFiles = {
 			"GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp.zip/download",
-			"Office suite - AbiWord, Gnumeric and GIMP|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office.zip/download"
+			"Office suite - AbiWord and Gnumeric|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office.zip/download"
 		};
 		int [] freeSpaceRequired = {
-			120,
-			270
+			180,
+			200
 		};
 		int installOption = 0;
 		final int [] installOption2 = {0}; // To circumvent assignment to final variable
@@ -312,6 +312,7 @@ class DataDownloader extends Thread
 			//count += 1;
 		}
 		DownloadComplete = true;
+		downloadingInProcess = false;
 		initParent();
 	}
 
@@ -695,9 +696,9 @@ class DataDownloader extends Thread
 		System.out.println( "Extracting files..." );
 
 		try {
-			if( postinstall != null )
+			if( postinstall != null || downloadingInProcess )
 			{
-				Status.setText( "Waiting for install script to finish" );
+				Status.setText( "Data is still downloading, please come back later" );
 				while( ! (new File(intFs + "chroot.sh").exists()) )
 				{
 					try {

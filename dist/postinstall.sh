@@ -19,9 +19,6 @@ ln -s $SDCARD_ROOT sdcard
 cat $SDCARD_UBUNTU/startx.sh > startx.sh
 chmod 755 startx.sh
 
-cat $SDCARD_UBUNTU/chroot.sh > chroot.sh
-chmod 755 chroot.sh
-
 echo nameserver 8.8.8.8 > etc/resolv.conf
 echo nameserver 8.8.4.4 >> etc/resolv.conf
 
@@ -42,5 +39,9 @@ cat $SDCARD_UBUNTU/New%20shortcut.desktop > root/Desktop/New%20shortcut.desktop
 chmod 644 root/Desktop/New%20shortcut.desktop
 cat $SDCARD_UBUNTU/Terminal.desktop > root/Desktop/Terminal.desktop
 ls usr/bin/libreoffice && cat $SDCARD_UBUNTU/Office.desktop > root/Desktop/Office.desktop && chmod 644 root/Desktop/Office.desktop
+
+# This one should come last
+cat $SDCARD_UBUNTU/chroot.sh > chroot.sh
+chmod 755 chroot.sh
 
 rm $SDCARD_UBUNTU/binaries.tar.gz

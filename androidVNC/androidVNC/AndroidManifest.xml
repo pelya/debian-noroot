@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cuntubuntu" android:installLocation="auto" android:versionCode="120403" android:versionName="Natty tech demo working on the Gingerbread inside emulator">
+    package="com.cuntubuntu" android:installLocation="auto" android:versionCode="120404" android:versionName="Natty tech demo working on the Gingerbread inside emulator">
     <application android:icon="@drawable/icon" android:label="Ubuntu fakechroot" android:debuggable="false">
  		<activity android:label="@string/app_name" android:name="androidVNC" android:screenOrientation="landscape">
 			<intent-filter>
