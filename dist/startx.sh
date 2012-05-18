@@ -8,7 +8,11 @@ dbus-daemon --system &
 #xfce4-session # Works okay, but popups a dialog box
 sleep 5
 xfwm4 &
-xfce4-panel &
 #xfdesktop & # This worked in Precise, but fails in Natty
-libreoffice
-
+# Run one of the pre-installed apps
+#libreoffice # Fails because Java fails
+gimp &
+kword &
+abiword &
+gnumeric &
+xfce4-panel

@@ -202,14 +202,16 @@ class DataDownloader extends Thread
 		}
 
 		String [] downloadFiles = {
-			"Minimal installation|http://sourceforge.net/projects/libsdl-android/files/ubuntu/natty-minimal.zip/download",
-			"LibreOffice suite|http://sourceforge.net/projects/libsdl-android/files/ubuntu/natty-office.zip/download"
+			"GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp.zip/download",
+			"Office suite - AbiWord, Gnumeric and GIMP|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office.zip/download"
 		};
-		int [] freeSpaceRequired = { 120, 270 };
-		int installOption = 1;
+		int [] freeSpaceRequired = {
+			120,
+			270
+		};
+		int installOption = 0;
 		final int [] installOption2 = {0}; // To circumvent assignment to final variable
 
-		if(false) // apt, synaptic and xfdesktop are broken in Natty, so libreoffice is the only useful app around
 		{
 			final AlertDialog.Builder builder = new AlertDialog.Builder(Parent);
 			final Semaphore proceed = new Semaphore(0);
