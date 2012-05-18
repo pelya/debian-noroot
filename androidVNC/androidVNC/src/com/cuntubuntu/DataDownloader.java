@@ -63,6 +63,8 @@ import android.os.StatFs;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import java.util.concurrent.Semaphore;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 
 
 class CountingInputStream extends BufferedInputStream {
@@ -175,7 +177,7 @@ class DataDownloader extends Thread
 		Parent = _Parent;
 		Status = new StatusWriter( _Status, _Parent );
 		Status.setText( "Initializing download" );
-		outFilesDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/download";
+		outFilesDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ubuntu";
 		DownloadComplete = false;
 		this.start();
 	}
@@ -191,26 +193,72 @@ class DataDownloader extends Thread
 	public void run()
 	{
 		String intFs = Parent.getFilesDir().getAbsolutePath() + "/";
-		if ( (new File(intFs + "chroot.sh").exists()) ) {
-			DownloadComplete = true;
+		if ( downloadingInProcess ) {
+			if( (new File(intFs + "chroot.sh").exists()) )
+				DownloadComplete = true;
 			initParent();
 			return;
 		}
 
 		String [] downloadFiles = {
-			"Fakechroot and busybox|http://sourceforge.net/projects/libsdl-android/files/ubuntu/fakechroot-01.zip/download",
-			"Ubuntu image|:ubuntu.tar.gz:http://sourceforge.net/projects/libsdl-android/files/ubuntu/armel-rootfs-201204262226.tgz/download"
+			"Minimal installation|http://sourceforge.net/projects/libsdl-android/files/ubuntu/natty-minimal.zip/download",
+			"LibreOffice suite|http://sourceforge.net/projects/libsdl-android/files/ubuntu/natty-office.zip/download"
 		};
-		
-		StatFs phone = new StatFs(Environment.getDataDirectory().getPath());
-		long freePhone = (long)phone.getAvailableBlocks() * phone.getBlockSize() / 1024 / 1024;
-		if(freePhone < 500)
+		int [] freeSpaceRequired = { 120, 270 };
+		int installOption = 0;
+		final int [] installOption2 = {0}; // To circumvent assignment to final variable
+
 		{
 			final AlertDialog.Builder builder = new AlertDialog.Builder(Parent);
 			final Semaphore proceed = new Semaphore(0);
-			builder.setTitle("Not enough data storage");
-			builder.setMessage("500 Mb internal sorage required, you have only " + freePhone + " Mb");
-			builder.setPositiveButton("Install", new DialogInterface.OnClickListener() {
+			builder.setTitle("Installation type");
+			final CharSequence[] items = { downloadFiles[0].split("[|]")[0], downloadFiles[1].split("[|]")[0] };
+
+			builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() 
+			{
+				public void onClick(DialogInterface dialog, int item) 
+				{
+					installOption2[0] = item;
+					dialog.dismiss();
+					proceed.release();
+				}
+			});
+			builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+				public void onCancel(DialogInterface dialog)
+				{
+					System.exit(0);
+				}
+			});
+			class Callback implements Runnable
+			{
+				public androidVNC Parent;
+				public void run()
+				{
+					AlertDialog alert = builder.create();
+					alert.setOwnerActivity(Parent);
+					alert.show();
+				}
+			}
+			Callback cb = new Callback();
+			cb.Parent = Parent;
+			if(Parent != null)
+				Parent.runOnUiThread(cb);
+			
+			try {
+				proceed.acquire();
+			} catch ( Exception e ) {}
+		}
+		installOption = installOption2[0];
+		
+		StatFs phone = new StatFs(Environment.getDataDirectory().getPath());
+		long freePhone = (long)phone.getAvailableBlocks() * phone.getBlockSize() / 1024 / 1024;
+		if(freePhone < freeSpaceRequired[installOption])
+		{
+			final AlertDialog.Builder builder = new AlertDialog.Builder(Parent);
+			final Semaphore proceed = new Semaphore(0);
+			builder.setTitle("Not enough free space");
+			builder.setMessage(freeSpaceRequired[installOption] + " Mb internal storage required, you have only " + freePhone + " Mb");
+			builder.setPositiveButton("Install anyway", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
 					dialog.dismiss();
 					proceed.release();
@@ -248,15 +296,16 @@ class DataDownloader extends Thread
 			} catch ( Exception e ) {}
 		}
 		
-		int count = 0;
-		for( int i = 0; i < downloadFiles.length; i++ )
+		downloadingInProcess = true;
+		//int count = 0;
+		//for( int i = 0; i < downloadFiles.length; i++ )
 		{
-			if( ! DownloadDataFile(downloadFiles[i], ".DownloadFinished-" + String.valueOf(i) + ".flag", count+1, downloadFiles.length) )
+			if( ! DownloadDataFile(downloadFiles[installOption], ".DownloadFinished.flag", 1, 1) )
 			{
 				DownloadFailed = true;
 				return;
 			}
-			count += 1;
+			//count += 1;
 		}
 		DownloadComplete = true;
 		initParent();
@@ -626,10 +675,26 @@ class DataDownloader extends Thread
 	
 	private void initParent()
 	{
+		downloadingInProcess = true;
+		String intFs = Parent.getFilesDir().getAbsolutePath() + "/";
+		
+		try {
+			ObjectInputStream version = new ObjectInputStream(new FileInputStream( intFs + "version" ));
+			if( version.readInt() != getApplicationVersion() )
+				throw new IOException();
+			version.close();
+		} catch ( Exception e ) {
+			Status.setText( "Removing previous installation..." );
+			System.out.println( "Removing previous installation..." );
+			if( postinstall == null )
+				deleteRecursive(new File(Parent.getFilesDir().getAbsolutePath()));
+		}
+
+		if ( ! (new File(intFs + "chroot.sh").exists()) ) {
+
 		Status.setText( "Extracting files..." );
 		System.out.println( "Extracting files..." );
-		String intFs = Parent.getFilesDir().getAbsolutePath() + "/";
-		if ( ! (new File(intFs + "chroot.sh").exists()) ) {
+
 		try {
 			if( postinstall != null )
 			{
@@ -648,7 +713,8 @@ class DataDownloader extends Thread
 				Runtime.getRuntime().exec("chmod 755 " + intFs + "postinstall.sh").waitFor();
 				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./postinstall.sh");
 				Map<String, String> env = pb.environment();
-				env.put("SDCARD", Environment.getExternalStorageDirectory().getAbsolutePath());
+				env.put("SDCARD_UBUNTU", outFilesDir);
+				env.put("SDCARD_ROOT", Environment.getExternalStorageDirectory().getAbsolutePath());
 				pb.directory(new File(Parent.getFilesDir().getAbsolutePath()));
 				postinstall = pb.start();
 				byte buf[] = new byte[2048];
@@ -667,6 +733,13 @@ class DataDownloader extends Thread
 				postinstall.waitFor();
 				Status.setText( "Extracting finished" );
 				System.out.println( "Extracting finished" );
+
+				try {
+					ObjectOutputStream version = new ObjectOutputStream(Parent.openFileOutput( intFs + "version", Parent.MODE_WORLD_READABLE ));
+					version.writeInt(getApplicationVersion());
+					version.close();
+				} catch ( Exception e ) {};
+
 			}
 		} catch ( Exception e ) {
 			Status.setText( "Error: " + e.toString() );
@@ -684,10 +757,11 @@ class DataDownloader extends Thread
 				Map<String, String> env = pb.environment();
 				int w1 = Parent.getWindowManager().getDefaultDisplay().getWidth();
 				int h1 = Parent.getWindowManager().getDefaultDisplay().getHeight();
-				int w = Math.max(w1, h1);
-				int h = Math.min(w1, h1);
+				int w = Math.max(800, Math.max(w1, h1));
+				int h = Math.max(480, Math.min(w1, h1));
 				System.out.println( "Display resolution: " + String.valueOf(w) + "x" + String.valueOf(h) );
 				env.put("DISPLAY_RESOLUTION", String.valueOf(w) + "x" + String.valueOf(h));
+				env.put("SDCARD_ROOT", Environment.getExternalStorageDirectory().getAbsolutePath());
 				pb.directory(new File(Parent.getFilesDir().getAbsolutePath()));
 				fakechroot = pb.start();
 
@@ -709,7 +783,7 @@ class DataDownloader extends Thread
 				*/
 				// --- DEBUG ---
 
-				Thread.sleep(5000);
+				Thread.sleep(3000);
 			} catch ( Exception e ) {
 				Status.setText( "Error: " + e.toString() );
 				System.out.println( "Error launching fakechroot: " + e.toString() );
@@ -769,6 +843,7 @@ class DataDownloader extends Thread
 
 	private static Process fakechroot = null;
 	private static Process postinstall = null;
+	private static boolean downloadingInProcess = false;
 
   static void copyFile(String srFile, String dtFile) {
   try{
@@ -794,6 +869,28 @@ class DataDownloader extends Thread
   System.out.println(e.getMessage());
   }
   }
+
+    public static boolean deleteRecursive(File path) {
+        if (!path.exists()) return true;
+        boolean ret = true;
+        if (path.isDirectory()){
+            for (File f : path.listFiles()){
+                ret = ret && deleteRecursive(f);
+            }
+        }
+        return ret && path.delete();
+    }
+
+	public int getApplicationVersion()
+	{
+		try {
+			PackageInfo packageInfo = Parent.getPackageManager().getPackageInfo(Parent.getPackageName(), 0);
+			return packageInfo.versionCode;
+		} catch (PackageManager.NameNotFoundException e) {
+			System.out.println("libSDL: Cannot get the version of our own package: " + e);
+		}
+		return 0;
+	}
 
 }
 

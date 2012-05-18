@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=LibreOffice
+Comment=
+Exec=libreoffice
+Icon=libreoffice
+Path=
+Terminal=false
+StartupNotify=false
