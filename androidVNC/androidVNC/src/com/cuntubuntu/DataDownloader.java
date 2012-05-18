@@ -835,9 +835,9 @@ class DataDownloader extends Thread
         return new DefaultHttpClient();
 	}
 	
-	public StatusWriter Status;
-	public boolean DownloadComplete = false;
-	public boolean DownloadFailed = false;
+	public static StatusWriter Status;
+	public static boolean DownloadComplete = false;
+	public static boolean DownloadFailed = false;
 	private androidVNC Parent;
 	private String outFilesDir = null;
 
