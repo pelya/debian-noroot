@@ -5,4 +5,4 @@ sudo qemu-debootstrap --arch=armel --verbose \
         --components=main,universe,restricted,multiverse \
         --include=ubuntu-minimal,fakeroot,fakechroot,xfonts-base,x11-common,tightvncserver,synaptic,busybox,putty,xfce4-panel,xfce4-session,xfce4-utils,xfdesktop4,xfwm4,gimp \
         natty dist-gimp \
-&& sudo cp -a dist-gimp dist-gimp-backup && sudo ./prepare-img.sh dist-gimp com.cuntubuntu
+&& sudo ./prepare-img.sh dist-gimp /data/data/com.cuntubuntu/files

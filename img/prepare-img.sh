@@ -2,12 +2,12 @@
 [ "$USER" = "root" ] || { echo This script needs to be run with superuser privileges; exit 1;}
 
 DIST=dist-minimal
-PKGNAME=com.cuntubuntu
+ROOTPATH=/data/data/com.cuntubuntu
 
 [ -z "$1" ] || DIST="$1"
-[ -z "$2" ] || PKGNAME="$2"
+[ -z "$2" ] || ROOTPATH="$2"
 
-echo DIST $DIST PKGNAME $PKGNAME
+echo DIST $DIST ROOTPATH $ROOTPATH
 
 rm -rf $DIST-sd $DIST.zip
 mkdir $DIST-sd
@@ -20,7 +20,7 @@ find -type l | while read LINK; do
 	if echo "$TARGET" | grep '^/' > /dev/null; then
 		echo "$LINK -> $TARGET - absolute link, expanding"
 		rm "$LINK"
-		ln -s "/data/data/$PKGNAME/files$TARGET" "$LINK"
+		ln -s "$ROOTPATH$TARGET" "$LINK"
 	else
 		echo "$LINK -> $TARGET - relative link, ignoring"
 	fi
@@ -38,6 +38,8 @@ find -type d | sed 's@^[.]/@@' | while read F; do
 	[ -z "`find $F -type c`" ] || continue
 	[ -z "`find $F -type f -exec file {} \; | grep 'ELF 32'`" ] || continue
 	[ -z "`find $F -type f | grep '[:\"*:<>?\\|]'`" ] || continue
+	# Directories var, run and tmp may not be moved, because they will contain files
+	# which will be flock()-ed or lockf()-ed, and that operation cannot be performed on files on SD card, which has FAT32 filesystem.
 	[ -z "`echo $F | grep '^var'`" ] || continue
 	[ -z "`echo $F | grep '^tmp'`" ] || continue
 	[ -z "`echo $F | grep '^run'`" ] || continue
@@ -46,7 +48,7 @@ find -type d | sed 's@^[.]/@@' | while read F; do
 	ESCAPED=`echo "$F" | tr ':"*:<>?\\|' '----------'`
 	mkdir -p "`dirname ../$DIST-sd/$ESCAPED`"
 	mv "$F" "../$DIST-sd/$ESCAPED"
-	ln -s "/data/data/$PKGNAME/files/sd/$ESCAPED" "$F"
+	ln -s "$ROOTPATH/sd/$ESCAPED" "$F"
 done
 
 for F in var/cache/apt var/lib/apt var/cache/debconf ; do
@@ -54,7 +56,7 @@ for F in var/cache/apt var/lib/apt var/cache/debconf ; do
 	ESCAPED=`echo "$F" | tr ':"*:<>?\\|' '----------'`
 	mkdir -p "`dirname ../$DIST-sd/$ESCAPED`"
 	mv "$F" "../$DIST-sd/$ESCAPED"
-	ln -s "/data/data/$PKGNAME/files/sd/$ESCAPED" "$F"
+	ln -s "$ROOTPATH/sd/$ESCAPED" "$F"
 done
 
 echo "Offloading files to SD card"
@@ -68,7 +70,7 @@ find -type f -executable -o -type f -size "+4k" -exec file {} \; | grep -v 'ELF 
 	ESCAPED=`echo "$F" | tr ':"*:<>?\\|' '----------'`
 	mkdir -p "`dirname ../$DIST-sd/$ESCAPED`"
 	mv "$F" "../$DIST-sd/$ESCAPED"
-	ln -s "/data/data/$PKGNAME/files/sd/$ESCAPED" "$F"
+	ln -s "$ROOTPATH/sd/$ESCAPED" "$F"
 done
 
 # Processing binaries through UPX will make them unusable on Android
