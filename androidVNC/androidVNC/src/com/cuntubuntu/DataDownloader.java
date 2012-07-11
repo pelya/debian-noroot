@@ -765,7 +765,7 @@ class DataDownloader extends Thread
 			try {
 				Status.setText( "Launching Ubuntu" );
 				
-				if( isAppInstalled("au.com.darkside.XServer") )
+				if( false && isAppInstalled("au.com.darkside.XServer") ) // Android XServer does not work for some reason
 				{
 					// Only port is used from that URI - "http://xserver:7011/xserver", other parameters are random
 					Runtime.getRuntime().exec("am start -n au.com.darkside.XServer/au.com.darkside.XDemo.XServerActivity -d http://xserver:7011/xserver").waitFor();
