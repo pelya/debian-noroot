@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cuntubuntu" android:installLocation="auto" android:versionCode="120406" android:versionName="Natty tech demo">
+    package="com.cuntubuntu" android:installLocation="auto" android:versionCode="120711" android:versionName="12-07-11">
     <application android:icon="@drawable/icon" android:label="Ubuntu fakechroot" android:debuggable="false">
  		<activity android:label="@string/app_name" android:name="androidVNC" android:screenOrientation="landscape">
 			<intent-filter>

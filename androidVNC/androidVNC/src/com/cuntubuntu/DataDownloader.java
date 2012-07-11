@@ -202,15 +202,25 @@ class DataDownloader extends Thread
 		}
 
 		String [] downloadFiles = {
-			"GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp.zip/download",
-			"Office suite - AbiWord and Gnumeric (and GIMP)|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office.zip/download"
+			"Ubuntu 11.04 with GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp.zip/download",
+			"Ubuntu 11.04 with office suite (AbiWord, Gnumeric, GIMP)|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office.zip/download",
+			"Ubuntu 12.04 with XFCE4 desktop, GIMP and Synaptic|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-precise.zip/download"
 		};
 		int [] freeSpaceRequired = {
 			180,
+			200,
 			200
 		};
 		int installOption = 0;
 		final int [] installOption2 = {0}; // To circumvent assignment to final variable
+		System.out.println("Ubuntu noroot: Kernel major version, as parsed from /proc/version: " + readKernelMajorVersion() + ".X.X");
+		if(readKernelMajorVersion() <= 2)
+		{
+			String [] downloadFiles2 = { downloadFiles[0], downloadFiles[1] };
+			int [] freeSpaceRequired2 = { freeSpaceRequired[0], freeSpaceRequired[1] };
+			downloadFiles = downloadFiles2;
+			freeSpaceRequired = freeSpaceRequired2;
+		}
 
 		{
 			final AlertDialog.Builder builder = new AlertDialog.Builder(Parent);
@@ -682,7 +692,7 @@ class DataDownloader extends Thread
 	{
 		String intFs = Parent.getFilesDir().getAbsolutePath() + "/";
 		
-		if( upgrading && postinstall == null )
+		if( upgrading && postinstall == null && false ) // Assume everyone already upgraded
 		{
 			Status.setText( "Removing previous installation..." );
 			System.out.println( "Removing previous installation..." );
@@ -747,10 +757,19 @@ class DataDownloader extends Thread
 		}
 		}
 
+		boolean launchVnc = true;
 		if( fakechroot == null )
 		{
 			try {
 				Status.setText( "Launching Ubuntu" );
+				
+				if( isAppInstalled("au.com.darkside.XServer") )
+				{
+					// Only port is used from that URI - "http://xserver:7011/xserver", other parameters are random
+					Runtime.getRuntime().exec("am start -n au.com.darkside.XServer/au.com.darkside.XDemo.XServerActivity -d http://xserver:7011/xserver").waitFor();
+					Thread.sleep(2000);
+					launchVnc = false;
+				}
 
 				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./chroot.sh", "bin/sh", "./startx.sh");
 				Map<String, String> env = pb.environment();
@@ -803,7 +822,7 @@ class DataDownloader extends Thread
 		synchronized(this)
 		{
 			cb.Parent = Parent;
-			if(Parent != null)
+			if(Parent != null && launchVnc)
 				Parent.runOnUiThread(cb);
 		}
 	}
@@ -905,5 +924,34 @@ class DataDownloader extends Thread
 		return true;
 	}
 
+	private boolean isAppInstalled(String uri)
+	{
+		PackageManager pm = Parent.getPackageManager();
+		boolean installed = false;
+		try {
+			pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+			installed = true;
+		} catch (PackageManager.NameNotFoundException e) {
+			installed = false;
+		}
+		return installed;
+	}
+	
+	private int readKernelMajorVersion()
+	{
+		try {
+			java.io.FileReader r = new java.io.FileReader("/proc/version");
+			char buf[] = new char[1024];
+			int len = r.read(buf, 0, 1024);
+			String v = new String(buf, 0, len);
+			//System.out.println("/proc/version: " + v);
+			String vv[] = v.split(" ");
+			//System.out.println("/proc/version vernum: " + vv[2]);
+			String vvv[] = vv[2].split("[.]");
+			//System.out.println("/proc/version major vernum: " + vvv[0]);
+			return Integer.valueOf(vvv[0]);
+		} catch ( Exception e ) {};
+		return 0;
+	}
 }
 
