@@ -204,7 +204,7 @@ class DataDownloader extends Thread
 		String [] downloadFiles = {
 			"Ubuntu 11.04 with GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp.zip/download",
 			"Ubuntu 11.04 with office suite (AbiWord, Gnumeric, GIMP)|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office.zip/download",
-			"Ubuntu 12.04 with XFCE4 desktop, GIMP and Synaptic|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-precise.zip/download"
+			"Ubuntu 12.04 with XFCE4 desktop, GIMP and Synaptic|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-precise2.zip/download"
 		};
 		int [] freeSpaceRequired = {
 			180,
