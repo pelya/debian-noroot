@@ -226,7 +226,9 @@ class DataDownloader extends Thread
 			final AlertDialog.Builder builder = new AlertDialog.Builder(Parent);
 			final Semaphore proceed = new Semaphore(0);
 			builder.setTitle("Installation type");
-			final CharSequence[] items = { downloadFiles[0].split("[|]")[0], downloadFiles[1].split("[|]")[0] };
+			CharSequence[] items = new CharSequence[downloadFiles.length];
+			for(int i = 0; i < downloadFiles.length; i++)
+				items[i] = downloadFiles[i].split("[|]")[0];
 
 			builder.setSingleChoiceItems(items, -1, new DialogInterface.OnClickListener() 
 			{
