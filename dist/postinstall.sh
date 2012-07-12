@@ -1,6 +1,7 @@
 #!/system/bin/sh
 
 case x$SDCARD_UBUNTU in x ) export SDCARD_UBUNTU=$EXTERNAL_STORAGE/ubuntu;; esac
+case x$SDCARD_ROOT in x ) export SDCARD_ROOT=$EXTERNAL_STORAGE;; esac
 
 cat $SDCARD_UBUNTU/busybox > busybox
 chmod 755 busybox
