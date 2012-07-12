@@ -90,5 +90,5 @@ tar c * | gzip > ../$DIST-sd/binaries.tar.gz
 cd ../$DIST-sd
 cp ../../dist/* .
 zip -r ../$DIST.zip .
-chmod a+rw ../$DIST.zip
+chmod a+rw ../$DIST.zip ../$DIST .
 cd ..
