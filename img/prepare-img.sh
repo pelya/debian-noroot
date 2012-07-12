@@ -43,6 +43,7 @@ find -type d | sed 's@^[.]/@@' | while read F; do
 	[ -z "`echo $F | grep '^var'`" ] || continue
 	[ -z "`echo $F | grep '^tmp'`" ] || continue
 	[ -z "`echo $F | grep '^run'`" ] || continue
+	[ -z "`echo $F | grep '^root'`" ] || continue
 
 	echo "Moving dir $F"
 	ESCAPED=`echo "$F" | tr ':"*:<>?\\|' '----------'`
@@ -65,6 +66,7 @@ find -type f -executable -o -type f -size "+4k" -exec file {} \; | grep -v 'ELF 
 	[ -z "`echo $F | grep '^var'`" ] || continue
 	[ -z "`echo $F | grep '^tmp'`" ] || continue
 	[ -z "`echo $F | grep '^run'`" ] || continue
+	[ -z "`echo $F | grep '^root'`" ] || continue
 
 	echo "$F" > /dev/stderr
 	ESCAPED=`echo "$F" | tr ':"*:<>?\\|' '----------'`
@@ -84,5 +86,5 @@ tar c * | gzip > ../$DIST-sd/binaries.tar.gz
 cd ../$DIST-sd
 cp ../../dist/* .
 zip -r ../$DIST.zip .
-
+chmod a+rw ../$DIST.zip
 cd ..

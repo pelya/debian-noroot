@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
-PORT=$RANDOM
-PORT=`expr $PORT + 32000`
+PORT=`date '+%N'`
+PORT=`expr $PORT % 1000 + 32000`
 echo Port $PORT
 
-/bin/busybox telnetd -K -p $PORT -l /bin/bash
-sleep 4
+/bin/busybox telnetd -K -b 127.0.0.1:$PORT -l /bin/sh
+sleep 3
 /usr/bin/putty telnet://127.0.0.1:$PORT

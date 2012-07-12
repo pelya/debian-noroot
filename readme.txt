@@ -61,22 +61,27 @@ it will prepare an image to be installed into directory /data/local/ubuntu on yo
 It will automatically launch the script img/prepare-img.sh, which will mangle the symlinks inside the Ubuntu image,
 so that they will work inside fakechroot environment, also it will move all regular non-executable files and dirs which contain
 only such files out of the image to be installed onto SD card, this reduces the internal device memory usage from 500 to around 200 Mb.
-You may use pre-built image at http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-debug.zip, unzip it into dir img/dist-debug-sd
+You may use pre-built image at http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-debug.zip
 
 Plug your Android device into the PC via USB cable, and enable USB debugging inside Settings in Android device.
 Determine where your SD card is located (it can be accessed by symlink /sdcard/ on both of my devices and on emulator):
 adb shell ls -l /sdcard/
 That should print you your SD card contents, and all following instructions assume the path /sdcard/ to be working.
 
-Copy the resulting system image tree to SD card:
-sudo `which adb` push img/dist-debug-sd/ /sdcard/ubuntu/
-sudo is needed because system image at img/dist-debug-sd contains dirs which are readable only by root, if you extract it from zip archive sudo is not needed.
+Copy the resulting system image to SD card, and unzip it:
+adb shell mkdir /sdcard/ubuntu
+adb push img/dist-debug.zip /sdcard/ubuntu
+adb shell mkdir /data/local/ubuntu
+adb push dist/busybox /data/local/ubuntu
+adb shell chmod 755 /data/local/ubuntu/busybox
+adb shell "cd /sdcard/ubuntu && /data/local/ubuntu/busybox unzip dist-debug.zip"
+
+Do not use "adb push img/dist-debug/ /sdcard/ubuntu/", it will not copy empty directories.
 
 Launch command:
 adb shell
 
 From ADB shell, execute following commands:
-mkdir /data/local/ubuntu
 cd /data/local/ubuntu
 cat /sdcard/ubuntu/postinstall.sh > postinstall.sh
 chmod 755 postinstall.sh
@@ -87,15 +92,17 @@ That script will unpack the Ubuntu directory tree with binaries and symlinks int
 (which should be /data/local/ubuntu), and will do some extra preparations. It might output some errors, ignore them.
 
 Then you will be able to launch Ubuntu commands by running script ./chroot.sh from the directory /data/local/ubuntu, for example
+./chroot.sh bin/sh
+will launch the familiar shell inside chroot, or bash shell (it does not work with Ubuntu 12.04)
 ./chroot.sh bin/bash
-will launch the familiar Bash shell inside chroot.
 
 The script chroot.sh contains a huge LD_LIBRARY_PATH variable, which lists all directories where a shared library can be found,
 that is because the loader lib/ld-linux.so.3 is confused by a fakechroot environment, and should be told explicitly what directories to search.
 You may get that list by running shell script img/getlibpaths.sh
 
-To start X VNC server launch following commands inside the Bash shell:
+To start X VNC server launch following commands inside the shell:
 export DISPLAY_RESOLUTION=1280x800 (place your actual screen resolution here)
+/fakeroot.sh
 /startx.sh
 
 Install android-vnc-viewer app from the Google Play onto your device, and enter following connection info:

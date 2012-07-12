@@ -202,9 +202,9 @@ class DataDownloader extends Thread
 		}
 
 		String [] downloadFiles = {
-			"Ubuntu 11.04 with GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp.zip/download",
-			"Ubuntu 11.04 with office suite (AbiWord, Gnumeric, GIMP)|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office.zip/download",
-			"Ubuntu 12.04 with XFCE4 desktop, GIMP and Synaptic|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-precise2.zip/download"
+			"Ubuntu 11.04 with GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-2.zip/download",
+			"Ubuntu 11.04 with office suite (AbiWord, Gnumeric, GIMP)|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office-2.zip/download",
+			"Ubuntu 12.04 with XFCE4 desktop and GIMP|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-precise.zip/download"
 		};
 		int [] freeSpaceRequired = {
 			180,
@@ -773,7 +773,7 @@ class DataDownloader extends Thread
 					launchVnc = false;
 				}
 
-				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./chroot.sh", "bin/sh", "./startx.sh");
+				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./chroot.sh", "bin/sh", "./fakeroot.sh", "./startx.sh");
 				Map<String, String> env = pb.environment();
 				int w1 = Parent.getWindowManager().getDefaultDisplay().getWidth();
 				int h1 = Parent.getWindowManager().getDefaultDisplay().getHeight();
