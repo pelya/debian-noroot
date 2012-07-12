@@ -38,6 +38,7 @@ find -type d | sed 's@^[.]/@@' | while read F; do
 	[ -z "`find $F -type c`" ] || continue
 	[ -z "`find $F -type f -exec file {} \; | grep 'ELF 32'`" ] || continue
 	[ -z "`find $F -type f | grep '[:\"*:<>?\\|]'`" ] || continue
+	[ -z "`find $F -type f -name lock`" ] || continue
 	# Directories var, run and tmp may not be moved, because they will contain files
 	# which will be flock()-ed or lockf()-ed, and that operation cannot be performed on files on SD card, which has FAT32 filesystem.
 	[ -z "`echo $F | grep '^var'`" ] || continue
@@ -52,14 +53,6 @@ find -type d | sed 's@^[.]/@@' | while read F; do
 	ln -s "$ROOTPATH/sd/$ESCAPED" "$F"
 done
 
-for F in var/cache/apt var/lib/apt var/cache/debconf ; do
-	echo "Moving dir $F"
-	ESCAPED=`echo "$F" | tr ':"*:<>?\\|' '----------'`
-	mkdir -p "`dirname ../$DIST-sd/$ESCAPED`"
-	mv "$F" "../$DIST-sd/$ESCAPED"
-	ln -s "$ROOTPATH/sd/$ESCAPED" "$F"
-done
-
 echo "Offloading files to SD card"
 
 find -type f -executable -o -type f -size "+4k" -exec file {} \; | grep -v 'ELF 32' | sed 's@^\([^ ]*\): .*@\1@' | sed 's@^[.]/@@' | while read F; do
@@ -67,8 +60,19 @@ find -type f -executable -o -type f -size "+4k" -exec file {} \; | grep -v 'ELF 
 	[ -z "`echo $F | grep '^tmp'`" ] || continue
 	[ -z "`echo $F | grep '^run'`" ] || continue
 	[ -z "`echo $F | grep '^root'`" ] || continue
+	[ -z "`find $F -name lock`" ] || continue
 
-	echo "$F" > /dev/stderr
+	echo "$F"
+	ESCAPED=`echo "$F" | tr ':"*:<>?\\|' '----------'`
+	mkdir -p "`dirname ../$DIST-sd/$ESCAPED`"
+	mv "$F" "../$DIST-sd/$ESCAPED"
+	ln -s "$ROOTPATH/sd/$ESCAPED" "$F"
+done
+
+for F in var/cache/apt/*.bin var/lib/apt/lists/*_Packages var/lib/apt/lists/*_Sources var/lib/apt/lists/*_Translation-* var/cache/debconf/templates* ; do
+	[ -n "`find $F -type f`" ] || continue
+
+	echo "$F"
 	ESCAPED=`echo "$F" | tr ':"*:<>?\\|' '----------'`
 	mkdir -p "`dirname ../$DIST-sd/$ESCAPED`"
 	mv "$F" "../$DIST-sd/$ESCAPED"

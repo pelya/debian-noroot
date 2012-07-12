@@ -722,6 +722,7 @@ class DataDownloader extends Thread
 				Runtime.getRuntime().exec("mkdir " + intFs).waitFor();
 				copyFile(getOutFilePath("postinstall.sh"), intFs + "postinstall.sh");
 				Runtime.getRuntime().exec("chmod 755 " + intFs + "postinstall.sh").waitFor();
+				// This should be replaced with Runtime.getRuntime().exec() with environment, because it causes exceptoin on Android 2.2 and lower
 				ProcessBuilder pb = new ProcessBuilder("/system/bin/sh", "./postinstall.sh");
 				Map<String, String> env = pb.environment();
 				env.put("SDCARD_UBUNTU", outFilesDir);
