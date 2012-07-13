@@ -10,10 +10,4 @@ sleep 2
 gimp &
 abiword &
 gnumeric &
-sleep 5
-xfce4-session # Works okay, but popups a dialog box
-#xfwm4 &
-#xfdesktop & # This worked in Precise, but fails in Natty
-# Run one of the pre-installed apps
-#libreoffice # Fails because Java fails
-#xfce4-panel
+if [ -f /usr/bin/xfce4-session ]; then xfce4-session; else synaptic; fi

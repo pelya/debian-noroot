@@ -69,6 +69,7 @@ find -type f -executable -o -type f -size "+4k" -exec file {} \; | grep -v 'ELF 
 	ln -s "$ROOTPATH/sd/$ESCAPED" "$F"
 done
 
+touch var/cache/apt/pkgcache.bin var/cache/apt/srcpkgcache.bin
 for F in var/cache/apt/*.bin var/lib/apt/lists/*_Packages var/lib/apt/lists/*_Sources var/lib/apt/lists/*_Translation-* var/cache/debconf/templates* ; do
 	[ -n "`find $F -type f`" ] || continue
 
