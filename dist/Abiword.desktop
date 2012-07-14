@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=AbiWord
+Comment=
+Exec=abiword
+Icon=abiword
+Path=
+Terminal=false
+StartupNotify=false

@@ -2,10 +2,10 @@
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=LibreOffice
+Name=Gnumeric
 Comment=
-Exec=libreoffice
-Icon=libreoffice
+Exec=gnumeric
+Icon=gnumeric
 Path=
 Terminal=false
 StartupNotify=false

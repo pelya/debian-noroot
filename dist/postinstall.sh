@@ -34,12 +34,14 @@ mkdir root
 mkdir root/.vnc
 cat $SDCARD_UBUNTU/passwd > root/.vnc/passwd
 mkdir root/Desktop
-cat $SDCARD_UBUNTU/Synaptic.desktop > root/Desktop/Synaptic.desktop
-chmod 644 root/Desktop/Synaptic.desktop
-cat $SDCARD_UBUNTU/New%20shortcut.desktop > root/Desktop/New%20shortcut.desktop
-chmod 644 root/Desktop/New%20shortcut.desktop
-cat $SDCARD_UBUNTU/Terminal.desktop > root/Desktop/Terminal.desktop
-ls usr/bin/libreoffice && cat $SDCARD_UBUNTU/Office.desktop > root/Desktop/Office.desktop && chmod 644 root/Desktop/Office.desktop
+for D in $SDCARD_UBUNTU/*.desktop; do
+cat $D > root/Desktop/`./busybox basename $D`
+chmod 644 root/Desktop/`./busybox basename $D`
+done
+
+cat $SDCARD_UBUNTU/updatelibpaths.sh > updatelibpaths.sh
+chmod 755 updatelibpaths.sh
+./updatelibpaths.sh > libpaths
 
 # This one should come last
 cat $SDCARD_UBUNTU/chroot.sh > chroot.sh
