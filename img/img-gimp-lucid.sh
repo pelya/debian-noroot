@@ -1,5 +1,5 @@
 #!/bin/sh
-echo "This should run on emulator with kernel 2.6.29"
+echo "This should run on devices with kernel 2.6.32"
 DIST=lucid
 sudo rm -r -f dist-gimp-$DIST
 sudo qemu-debootstrap --arch=armel --verbose \

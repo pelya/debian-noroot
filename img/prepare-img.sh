@@ -13,6 +13,7 @@ rm -rf $DIST-sd $DIST.zip
 mkdir $DIST-sd
 cd $DIST
 rm -f var/cache/apt/archives/*.deb
+find -type f var/log -delete
 
 echo "Pointing absolute symlinks to the chrooted path"
 find -type l | while read LINK; do
@@ -70,7 +71,9 @@ find -type f -executable -o -type f -size "+4k" -exec file {} \; | grep -v 'ELF 
 done
 
 touch var/cache/apt/pkgcache.bin var/cache/apt/srcpkgcache.bin
-for F in var/cache/apt/*.bin var/lib/apt/lists/*_Packages var/lib/apt/lists/*_Sources var/lib/apt/lists/*_Translation-* var/cache/debconf/templates* ; do
+for F in var/cache/apt/*.bin var/cache/debconf/templates*  \
+		var/lib/apt/lists/*_Packages var/lib/apt/lists/*_Sources var/lib/apt/lists/*_Translation-* \
+		var/lib/aspell/* var/lib/gconf/defaults/* var/lib/usbutils/* var/lib/scrollkeeper/*/* ; do
 	[ -n "`find $F -type f`" ] || continue
 
 	echo "$F"

@@ -176,7 +176,7 @@ class DataDownloader extends Thread
 	{
 		Parent = _Parent;
 		Status = new StatusWriter( _Status, _Parent );
-		Status.setText( "Initializing download" );
+		Status.setText( "Initializing" );
 		outFilesDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ubuntu";
 		DownloadComplete = false;
 		upgrading = checkUpgrading();
@@ -201,15 +201,25 @@ class DataDownloader extends Thread
 			return;
 		}
 
+		checkCpuAbi();
+
 		String [] downloadFiles = {
-			"Ubuntu 11.04 with GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-2.zip/download",
-			"Ubuntu 11.04 with office suite (AbiWord, Gnumeric, GIMP)|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office-2.zip/download",
-			"Ubuntu 12.04 with XFCE4 desktop and GIMP|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-precise.zip/download"
+			// "Ubuntu 11.04 with GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-2.zip",
+			"Debian Lenny with GIMP image editor|http://10.0.2.2/up/dist-gimp-lenny.zip",
+			// "Debian Lenny with office suite (AbiWord, Gnumeric, GIMP)|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office-lenny.zip",
+			"Debian Lenny with office suite (AbiWord, Gnumeric, GIMP)|http://10.0.2.2/up/dist-office-lenny.zip",
+			// "Ubuntu 12.04 with XFCE4 desktop and GIMP|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-precise.zip"
+			"Ubuntu 11.04 with GIMP image editor|http://192.168.1.101/up/dist-gimp-precise.zip",
 		};
 		int [] freeSpaceRequired = {
-			180,
-			200,
+			190,
+			230,
 			200
+		};
+		int [] freeSpaceRequiredSd = {
+			440,
+			520,
+			290
 		};
 		int installOption = 0;
 		final int [] installOption2 = {0}; // To circumvent assignment to final variable
@@ -218,8 +228,10 @@ class DataDownloader extends Thread
 		{
 			String [] downloadFiles2 = { downloadFiles[0], downloadFiles[1] };
 			int [] freeSpaceRequired2 = { freeSpaceRequired[0], freeSpaceRequired[1] };
+			int [] freeSpaceRequiredSd2 = { freeSpaceRequiredSd[0], freeSpaceRequiredSd[1] };
 			downloadFiles = downloadFiles2;
 			freeSpaceRequired = freeSpaceRequired2;
+			freeSpaceRequiredSd = freeSpaceRequiredSd2;
 		}
 
 		{
@@ -266,14 +278,19 @@ class DataDownloader extends Thread
 		}
 		installOption = installOption2[0];
 		
-		StatFs phone = new StatFs(Environment.getDataDirectory().getPath());
+		StatFs phone = new StatFs(Environment.getDataDirectory().getAbsolutePath());
+		StatFs sd = new StatFs(Environment.getExternalStorageDirectory().getAbsolutePath());
 		long freePhone = (long)phone.getAvailableBlocks() * phone.getBlockSize() / 1024 / 1024;
-		if(freePhone < freeSpaceRequired[installOption])
+		long freeSd = (long)sd.getAvailableBlocks() * sd.getBlockSize() / 1024 / 1024;
+		if(freePhone < freeSpaceRequired[installOption] || freeSd < freeSpaceRequiredSd[installOption])
 		{
 			final AlertDialog.Builder builder = new AlertDialog.Builder(Parent);
 			final Semaphore proceed = new Semaphore(0);
 			builder.setTitle("Not enough free space");
-			builder.setMessage(freeSpaceRequired[installOption] + " Mb internal storage required, you have only " + freePhone + " Mb");
+			if(freePhone < freeSpaceRequired[installOption])
+				builder.setMessage(freeSpaceRequired[installOption] + " Mb internal storage required, you have only " + freePhone + " Mb");
+			else
+				builder.setMessage(freeSpaceRequiredSd[installOption] + " Mb SD/USB storage required, you have only " + freeSd + " Mb");
 			builder.setPositiveButton("Install anyway", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int item) {
 					dialog.dismiss();
@@ -955,6 +972,53 @@ class DataDownloader extends Thread
 			return Integer.valueOf(vvv[0]);
 		} catch ( Exception e ) {};
 		return 0;
+	}
+	
+	private void checkCpuAbi()
+	{
+		if(!android.os.Build.CPU_ABI.equalsIgnoreCase("armeabi-v7a") && !android.os.Build.CPU_ABI2.equalsIgnoreCase("armeabi-v7a"))
+		{
+			final AlertDialog.Builder builder = new AlertDialog.Builder(Parent);
+			final Semaphore proceed = new Semaphore(0);
+			builder.setTitle("CPU not supported");
+			builder.setMessage("armeabi-v7a CPU required, your CPU is " + android.os.Build.CPU_ABI + " " + android.os.Build.CPU_ABI2 );
+			builder.setPositiveButton("Install anyway", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int item) {
+					dialog.dismiss();
+					proceed.release();
+				}
+			});
+			builder.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int item) {
+					dialog.dismiss();
+					System.exit(0);
+				}
+			});
+			builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+				public void onCancel(DialogInterface dialog)
+				{
+					System.exit(0);
+				}
+			});
+			class Callback implements Runnable
+			{
+				public androidVNC Parent;
+				public void run()
+				{
+					AlertDialog alert = builder.create();
+					alert.setOwnerActivity(Parent);
+					alert.show();
+				}
+			}
+			Callback cb = new Callback();
+			cb.Parent = Parent;
+			if(Parent != null)
+				Parent.runOnUiThread(cb);
+			
+			try {
+				proceed.acquire();
+			} catch ( Exception e ) {}
+		}
 	}
 }
 
