@@ -30,6 +30,11 @@
 
 #ifdef HAVE_CONFIG_H
 #include "ares_config.h"
+#ifdef ANDROID // They are just empty stubs
+#undef HAVE_ARPA_NAMESER_H
+#undef HAVE_ARPA_NAMESER_COMPAT_H
+#endif
+
 #else
 
 #ifdef WIN32

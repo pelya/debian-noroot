@@ -728,12 +728,15 @@ void ares__send_query(ares_channel channel, struct query *query,
   struct server_state *server;
   int timeplus;
 
+  TRACE();
   server = &channel->servers[query->server];
+  TRACE();
   if (query->using_tcp)
     {
       /* Make sure the TCP socket for this server is set up and queue
        * a send request.
        */
+  TRACE();
       if (server->tcp_socket == ARES_SOCKET_BAD)
         {
           if (open_tcp_socket(channel, server) == -1)
@@ -743,12 +746,14 @@ void ares__send_query(ares_channel channel, struct query *query,
               return;
             }
         }
+  TRACE();
       sendreq = calloc(1, sizeof(struct send_request));
       if (!sendreq)
         {
         end_query(channel, query, ARES_ENOMEM, NULL, 0);
           return;
         }
+  TRACE();
       /* To make the common case fast, we avoid copies by using the
        * query's tcpbuf for as long as the query is alive. In the rare
        * case where the query ends while it's queued for transmission,
@@ -767,12 +772,14 @@ void ares__send_query(ares_channel channel, struct query *query,
           SOCK_STATE_CALLBACK(channel, server->tcp_socket, 1, 1);
           server->qhead = sendreq;
         }
+  TRACE();
       server->qtail = sendreq;
       query->server_info[query->server].tcp_connection_generation =
         server->tcp_connection_generation;
     }
   else
     {
+  TRACE();
       if (server->udp_socket == ARES_SOCKET_BAD)
         {
           if (open_udp_socket(channel, server) == -1)
@@ -789,27 +796,35 @@ void ares__send_query(ares_channel channel, struct query *query,
           next_server(channel, query, now);
           return;
         }
+  TRACE();
     }
+  TRACE();
     timeplus = channel->timeout << (query->try_count / channel->nservers);
+  TRACE();
     timeplus = (timeplus * (9 + (rand () & 7))) / 16;
+  TRACE();
     query->timeout = *now;
+  TRACE();
     ares__timeadd(&query->timeout,
                   timeplus);
     /* Keep track of queries bucketed by timeout, so we can process
      * timeout events quickly.
      */
+  TRACE();
     ares__remove_from_list(&(query->queries_by_timeout));
     ares__insert_in_list(
         &(query->queries_by_timeout),
         &(channel->queries_by_timeout[query->timeout.tv_sec %
                                       ARES_TIMEOUT_TABLE_SIZE]));
 
+  TRACE();
     /* Keep track of queries bucketed by server, so we can process server
      * errors quickly.
      */
     ares__remove_from_list(&(query->queries_to_server));
     ares__insert_in_list(&(query->queries_to_server),
                          &(server->queries_to_server));
+  TRACE();
 }
 
 /*

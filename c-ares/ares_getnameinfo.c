@@ -60,6 +60,7 @@
 #include "inet_ntop.h"
 #include "ares_nowarn.h"
 #include "ares_private.h"
+#include "ares_platform.h"
 
 struct nameinfo_query {
   ares_nameinfo_callback callback;
@@ -330,7 +331,7 @@ static char *lookup_service(unsigned short port, int flags,
 #if (defined(NETWARE) && !defined(__NOVELL_LIBC__))
           sep = getservbyport(port, (char*)proto);
 #else
-          sep = getservbyport(port, proto);
+          sep = ares_getservbyport(port, proto);
 #endif
 #endif
         }

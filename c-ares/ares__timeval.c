@@ -16,6 +16,8 @@
 #include "ares.h"
 #include "ares_private.h"
 
+#undef HAVE_CLOCK_GETTIME_MONOTONIC // Fails on Android 2.3 emulator
+
 #if defined(WIN32) && !defined(MSDOS)
 
 struct timeval ares__tvnow(void)

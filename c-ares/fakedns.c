@@ -10,6 +10,7 @@ gethostbyaddr_r
 getaddrinfo
 freeaddrinfo
 getnameinfo
+getservbyport
 
 Currently it does not fill h_aliases list, only h_name.
 It's licensed the same way as C-Ares lib is, if anyone cares about that.
@@ -21,9 +22,10 @@ It's licensed the same way as C-Ares lib is, if anyone cares about that.
 #include <netdb.h>
 #include <errno.h>
 #include "ares.h"
+#include "ares_setup.h"
+#include "ares_private.h"
 
 #define dbg(...)
-
 /*
 #define dbg(...) fprintf(stderr, __VA_ARGS__)
 */
@@ -70,6 +72,8 @@ FAKEDNS_EXTERN int getnameinfo (__const struct sockaddr *__restrict __sa,
 			socklen_t __hostlen, char *__restrict __serv,
 			socklen_t __servlen, unsigned int __flags);
 
+FAKEDNS_EXTERN struct servent *getservbyport(int port, const char *proto);
+
 /* Implementation */
 
 
@@ -101,6 +105,7 @@ static aresInit(ares_channel * channel)
 {
 	if(!aresInitDone)
 	{
+		dbg("%s: ares_library_init\n", __FUNCTION__);
 		ares_library_init(ARES_LIB_INIT_ALL);
 		aresInitDone = 1;
 		he.h_name = f_name;
@@ -110,8 +115,11 @@ static aresInit(ares_channel * channel)
 		he.h_addr_list = f_addrlist;
 	}
 
+	dbg("%s: ares_init\n", __FUNCTION__);
 	ares_init(channel);
+	dbg("%s: ares_set_servers_csv\n", __FUNCTION__);
 	ares_set_servers_csv(*channel, "8.8.8.8,8.8.4.4");
+	dbg("%s: done\n", __FUNCTION__);
 }
 
 static struct sockaddr * initHostent(struct hostent *__restrict __result_buf, char *__restrict __buf, size_t __buflen)
@@ -532,14 +540,16 @@ int getaddrinfo (__const char *__restrict __name,
 			__const struct addrinfo *__restrict __req,
 			struct addrinfo **__restrict __pai)
 {
-	/* TODO: __service is ignored */
 	ares_channel channel;
 	int nfds, c;
 	fd_set read_fds, write_fds;
 	struct timeval *tvp, tv;
 	struct addrinfo * data;
 	getaddrinfo_callback_param harg = { __pai, __service ? htons(atoi(__service)) : 0, __req ? __req->ai_socktype : 0 };
-	dbg("%s: '%s':'%s'\n", __FUNCTION__, __name, __service);
+	struct in_addr ip4;
+	struct in6_addr ip6;
+
+	dbg("%s: '%s':'%s' AF %d\n", __FUNCTION__, __name, __service, __req ? __req->ai_family : -1);
 
 	if(__service && harg.port == 0)
 	{
@@ -558,8 +568,48 @@ int getaddrinfo (__const char *__restrict __name,
 		}
 	}
 
+	if (inet_pton(AF_INET, __name, &ip4) == 1)
+	{
+		struct addrinfo * data = allocaddrinfo();
+		struct sockaddr_in * addr = (struct sockaddr_in *)data->ai_addr;
+		*__pai = data;
+		strncpy(data->ai_canonname, __name, HLEN);
+		data->ai_canonname[HLEN-1] = 0;
+		data->ai_family = AF_INET;
+		data->ai_socktype = harg.socktype;
+		data->ai_protocol = 0;
+		data->ai_flags = 0;
+		addr->sin_family = AF_INET;
+		addr->sin_port = harg.port;
+		memcpy(&(addr->sin_addr), &ip4, sizeof(ip4));
+		data->ai_addrlen = sizeof(struct sockaddr_in);
+		return 0;
+	}
+
+	if (inet_pton(AF_INET6, __name, &ip6) == 1)
+	{
+		struct addrinfo * data = allocaddrinfo();
+		struct sockaddr_in6 * addr = (struct sockaddr_in6 *)data->ai_addr;
+		*__pai = data;
+		strncpy(data->ai_canonname, __name, HLEN);
+		data->ai_canonname[HLEN-1] = 0;
+		data->ai_family = AF_INET6;
+		data->ai_socktype = harg.socktype;
+		data->ai_protocol = 0;
+		data->ai_flags = 0;
+		addr->sin6_family = AF_INET6;
+		addr->sin6_port = harg.port;
+		memcpy(&(addr->sin6_addr), &ip6, sizeof(ip6));
+		data->ai_addrlen = sizeof(struct sockaddr_in6);
+		return 0;
+	}
+
+	dbg("%s: aresInit\n", __FUNCTION__);
+
 	aresInit(&channel);
-	ares_gethostbyname(channel, __name, __req ? __req->ai_family : AF_INET, getaddrinfo_callback, &harg);
+	dbg("%s: ares_gethostbyname\n", __FUNCTION__);
+	ares_gethostbyname(channel, __name, __req ? (__req->ai_family != 0 ? __req->ai_family : AF_INET) : AF_INET, getaddrinfo_callback, &harg);
+	dbg("%s: loop\n", __FUNCTION__);
 	
 	for (;;)
 	{
@@ -573,7 +623,10 @@ int getaddrinfo (__const char *__restrict __name,
 		ares_process(channel, &read_fds, &write_fds);
 	}
 	
+	dbg("%s: ares_destroy\n", __FUNCTION__);
 	ares_destroy(channel);
+
+	dbg("%s: exit\n", __FUNCTION__);
 	
 	if (! (*harg.out) )
 		return EAI_FAIL;
@@ -644,7 +697,17 @@ int getnameinfo (__const struct sockaddr *__restrict __sa,
 	if(__flags & NI_NAMEREQD)
 		flags &= ARES_NI_NAMEREQD;
 
-	dbg("%s\n", __FUNCTION__);
+	if(__sa->sa_family == AF_INET)
+		dbg("%s: AF_INET addr 0x%08X port %d\n", __FUNCTION__, ntohl(((struct sockaddr_in *)__sa)->sin_addr.s_addr), (int)ntohs(((struct sockaddr_in *)__sa)->sin_port));
+	else
+	if(__sa->sa_family == AF_INET6)
+		dbg("%s: AF_INET6 port %d addr %04X:%04X:%04X:%04X:%04X:%04X:%04X:%04X\n", __FUNCTION__, (int)ntohs(((struct sockaddr_in6 *)__sa)->sin6_port),
+			(int)ntohs(((struct sockaddr_in6 *)__sa)->sin6_addr.s6_addr16[0]), (int)ntohs(((struct sockaddr_in6 *)__sa)->sin6_addr.s6_addr16[1]),
+			(int)ntohs(((struct sockaddr_in6 *)__sa)->sin6_addr.s6_addr16[2]), (int)ntohs(((struct sockaddr_in6 *)__sa)->sin6_addr.s6_addr16[3]),
+			(int)ntohs(((struct sockaddr_in6 *)__sa)->sin6_addr.s6_addr16[4]), (int)ntohs(((struct sockaddr_in6 *)__sa)->sin6_addr.s6_addr16[5]),
+			(int)ntohs(((struct sockaddr_in6 *)__sa)->sin6_addr.s6_addr16[6]), (int)ntohs(((struct sockaddr_in6 *)__sa)->sin6_addr.s6_addr16[7]));
+	else
+		dbg("%s: AF %d\n", __FUNCTION__, __sa->sa_family);
 	aresInit(&channel);
 	ares_getnameinfo(channel, __sa, __salen, flags, getnameinfo_callback, &harg);
 	
@@ -663,4 +726,9 @@ int getnameinfo (__const struct sockaddr *__restrict __sa,
 	ares_destroy(channel);
 
 	return harg.ret;
+}
+
+struct servent *getservbyport(int port, const char *proto)
+{
+	return ares_getservbyport(port, proto);
 }

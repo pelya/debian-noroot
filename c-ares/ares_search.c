@@ -62,15 +62,20 @@ void ares_search(ares_channel channel, const char *name, int dnsclass,
   /* If name only yields one domain to search, then we don't have
    * to keep extra state, so just do an ares_query().
    */
+  TRACE();
   status = single_domain(channel, name, &s);
+  TRACE();
   if (status != ARES_SUCCESS)
     {
       callback(arg, status, 0, NULL, 0);
       return;
     }
+  TRACE();
   if (s)
     {
+      TRACE();
       ares_query(channel, s, dnsclass, type, callback, arg);
+      TRACE();
       free(s);
       return;
     }
@@ -78,12 +83,14 @@ void ares_search(ares_channel channel, const char *name, int dnsclass,
   /* Allocate a search_query structure to hold the state necessary for
    * doing multiple lookups.
    */
+  TRACE();
   squery = malloc(sizeof(struct search_query));
   if (!squery)
     {
       callback(arg, ARES_ENOMEM, 0, NULL, 0);
       return;
     }
+  TRACE();
   squery->channel = channel;
   squery->name = strdup(name);
   if (!squery->name)
@@ -99,6 +106,7 @@ void ares_search(ares_channel channel, const char *name, int dnsclass,
   squery->arg = arg;
   squery->timeouts = 0;
   squery->ever_got_nodata = 0;
+  TRACE();
 
   /* Count the number of dots in name. */
   ndots = 0;
@@ -112,6 +120,7 @@ void ares_search(ares_channel channel, const char *name, int dnsclass,
    * then we try the name as-is first.  Otherwise, we try the name
    * as-is last.
    */
+  TRACE();
   if (ndots >= channel->ndots)
     {
       /* Try the name as-is first. */
@@ -138,6 +147,7 @@ void ares_search(ares_channel channel, const char *name, int dnsclass,
         callback(arg, status, 0, NULL, 0);
       }
     }
+  TRACE();
 }
 
 static void search_callback(void *arg, int status, int timeouts,

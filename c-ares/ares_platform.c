@@ -65,13 +65,13 @@ win_platform ares__getplatform(void)
 
 #endif /* WIN32 && ! MSDOS */
 
-#if defined(_WIN32_WCE)
+#if true
 
 /* IANA Well Known Ports are in range 0-1023 */
 #define USE_IANA_WELL_KNOWN_PORTS 1
 
 /* IANA Registered Ports are in range 1024-49151 */
-#define USE_IANA_REGISTERED_PORTS 1
+/* #define USE_IANA_REGISTERED_PORTS 1 */ // It's too huge with them
 
 struct pvt_servent {
   char           *s_name;
@@ -10983,7 +10983,7 @@ static struct pvt_servent IANAports[] = {
 { NULL,                {NULL}, 0, NULL }
 };
 
-struct servent *getservbyport(int port, const char *proto)
+struct servent *ares_getservbyport(int port, const char *proto)
 {
   unsigned short u_port;
   const char *protocol = NULL;
@@ -11000,7 +11000,7 @@ struct servent *getservbyport(int port, const char *proto)
         else if (!strncasecmp(proto, "udp", 3))
           protocol = "udp";
         else
-          error = WSAEFAULT;
+          error = EFAULT;
         break;
       case 4:
         if (!strncasecmp(proto, "sctp", 4))
@@ -11008,10 +11008,10 @@ struct servent *getservbyport(int port, const char *proto)
         else if (!strncasecmp(proto, "dccp", 4))
           protocol = "dccp";
         else
-          error = WSAEFAULT;
+          error = EFAULT;
         break;
       default:
-        error = WSAEFAULT;
+        error = EFAULT;
       }
     }
 
@@ -11025,11 +11025,11 @@ struct servent *getservbyport(int port, const char *proto)
                 return (struct servent *)&IANAports[i];
             }
         }
-      error = WSANO_DATA;
+      error = ENODATA;
     }
 
-  SET_SOCKERRNO(error);
+  errno = error;
   return NULL;
 }
 
-#endif /* _WIN32_WCE */
+#endif

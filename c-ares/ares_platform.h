@@ -34,9 +34,9 @@ win_platform ares__getplatform(void);
 
 #endif
 
-#if defined(_WIN32_WCE)
+#if defined(_WIN32_WCE) || 1
 
-struct servent *getservbyport(int port, const char *proto);
+struct servent *ares_getservbyport(int port, const char *proto);
 
 #endif
 

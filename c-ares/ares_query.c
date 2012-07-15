@@ -111,11 +111,13 @@ void ares_query(ares_channel channel, const char *name, int dnsclass,
   struct qquery *qquery;
   unsigned char *qbuf;
   int qlen, rd, status;
+  TRACE();
 
   /* Compose the query. */
   rd = !(channel->flags & ARES_FLAG_NORECURSE);
   status = ares_mkquery(name, dnsclass, type, channel->next_id, rd, &qbuf,
                         &qlen);
+  TRACE();
   if (status != ARES_SUCCESS)
     {
       if (qbuf != NULL) free(qbuf);
@@ -123,8 +125,10 @@ void ares_query(ares_channel channel, const char *name, int dnsclass,
       return;
     }
 
+  TRACE();
   channel->next_id = generate_unique_id(channel);
 
+  TRACE();
   /* Allocate and fill in the query structure. */
   qquery = malloc(sizeof(struct qquery));
   if (!qquery)
@@ -135,10 +139,13 @@ void ares_query(ares_channel channel, const char *name, int dnsclass,
     }
   qquery->callback = callback;
   qquery->arg = arg;
+  TRACE();
 
   /* Send it off.  qcallback will be called when we get an answer. */
   ares_send(channel, qbuf, qlen, qcallback, qquery);
+  TRACE();
   ares_free_string(qbuf);
+  TRACE();
 }
 
 static void qcallback(void *arg, int status, int timeouts, unsigned char *abuf, int alen)

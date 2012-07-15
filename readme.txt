@@ -47,6 +47,9 @@ git submodule update --init
 then run
 ./build.sh
 That should compile the .apk file. You'll also need to change URL to the Ubuntu image inside androidVNC/androidVNC/src/com/cuntubuntu/DataDownloader.java, in array named downloadFiles.
+If you want to recompile libfakechroot.so and libfakedns.so you wil need to do that from Debian Lenny,
+because default Ubuntu crosscompiler can only compile for CPU with hardware floating point support.
+Use script prepare-build-env.sh to set up Debian Lenny environment.
 
 The scripts for creating Ubuntu images are located in directory "img".
 
@@ -64,19 +67,15 @@ only such files out of the image to be installed onto SD card, this reduces the 
 You may use pre-built image at http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-debug.zip
 
 Plug your Android device into the PC via USB cable, and enable USB debugging inside Settings in Android device.
+You may also use Android 4 emulator, Android 2.3 will not work for debug image because it needs armeabi-v7a CPU.
+Debian Lenny may be launched on armeabi CPU and Android 2.3 emulator, however creating the system image is complicated.
+
 Determine where your SD card is located (it can be accessed by symlink /sdcard/ on both of my devices and on emulator):
 adb shell ls -l /sdcard/
 That should print you your SD card contents, and all following instructions assume the path /sdcard/ to be working.
 
-Copy the resulting system image to SD card, and unzip it:
-adb shell mkdir /sdcard/ubuntu
-adb push img/dist-debug.zip /sdcard/ubuntu
-adb shell mkdir /data/local/ubuntu
-adb push dist/busybox /data/local/ubuntu
-adb shell chmod 755 /data/local/ubuntu/busybox
-adb shell "cd /sdcard/ubuntu && /data/local/ubuntu/busybox unzip dist-debug.zip"
-
-Do not use "adb push img/dist-debug/ /sdcard/ubuntu/", it will not copy empty directories.
+Copy the resulting system image to SD card, and unzip it to directory named "ubuntu", using any file manager for Android.
+Do not use command "adb push img/dist-debug/ /sdcard/ubuntu/", it will not copy empty directories.
 
 Launch command:
 adb shell

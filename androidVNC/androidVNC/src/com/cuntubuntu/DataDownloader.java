@@ -201,22 +201,25 @@ class DataDownloader extends Thread
 			return;
 		}
 
-		//checkCpuAbi();
+		//checkCpuAbi(); // Debian Lenny can run on almost any ARM CPU, it does not need floating point support
 
 		String [] downloadFiles = {
-			// "Debian Lenny with GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-lenny.zip",
+			/*
 			"Debian Lenny with GIMP image editor|http://10.0.2.2/up/dist-gimp-lenny.zip",
-			// "Debian Lenny with office suite (AbiWord, Gnumeric, GIMP)|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office-lenny.zip",
 			"Debian Lenny with office suite (AbiWord, Gnumeric, GIMP)|http://10.0.2.2/up/dist-office-lenny.zip",
-			// "Ubuntu Precise with XFCE4 desktop and GIMP|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-precise.zip"
 			"Ubuntu Precise with GIMP image editor|http://192.168.1.101/up/dist-gimp-precise.zip",
 			"Ubuntu Precise with office suite (AbiWord, Gnumeric, GIMP)|http://192.168.1.101/up/dist-office-precise.zip",
+			*/
+			"Debian Lenny with GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-lenny.zip",
+			"Debian Lenny with office suite (AbiWord, Gnumeric, GIMP)|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office-lenny.zip",
+			"Ubuntu Precise with GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-precise.zip",
+			"Ubuntu Precise with office suite (AbiWord, Gnumeric, GIMP)|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office-precise.zip",
 		};
 		int [] freeSpaceRequired = {
-			190,
+			195,
 			230,
-			185,
-			210,
+			195,
+			220,
 		};
 		int [] freeSpaceRequiredSd = {
 			440,

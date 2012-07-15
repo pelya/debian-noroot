@@ -89,6 +89,7 @@ void ares_gethostbyname(ares_channel channel, const char *name, int family,
 {
   struct host_query *hquery;
 
+  TRACE();
   /* Right now we only know how to look up Internet addresses - and unspec
      means try both basically. */
   switch (family) {
@@ -101,9 +102,11 @@ void ares_gethostbyname(ares_channel channel, const char *name, int family,
     return;
   }
 
+  TRACE();
   if (fake_hostent(name, family, callback, arg))
     return;
 
+  TRACE();
   /* Allocate and fill in the host query structure. */
   hquery = malloc(sizeof(struct host_query));
   if (!hquery)
@@ -111,6 +114,7 @@ void ares_gethostbyname(ares_channel channel, const char *name, int family,
       callback(arg, ARES_ENOMEM, 0, NULL);
       return;
     }
+  TRACE();
   hquery->channel = channel;
   hquery->name = strdup(name);
   hquery->want_family = family;
@@ -120,13 +124,16 @@ void ares_gethostbyname(ares_channel channel, const char *name, int family,
     callback(arg, ARES_ENOMEM, 0, NULL);
     return;
   }
+  TRACE();
   hquery->callback = callback;
   hquery->arg = arg;
   hquery->remaining_lookups = channel->lookups;
   hquery->timeouts = 0;
 
+  TRACE();
   /* Start performing lookups according to channel->lookups. */
   next_lookup(hquery, ARES_ECONNREFUSED /* initial error code */);
+  TRACE();
 }
 
 static void next_lookup(struct host_query *hquery, int status_code)
@@ -135,6 +142,7 @@ static void next_lookup(struct host_query *hquery, int status_code)
   struct hostent *host;
   int status = status_code;
 
+  TRACE();
   for (p = hquery->remaining_lookups; *p; p++)
     {
       switch (*p)
@@ -146,19 +154,26 @@ static void next_lookup(struct host_query *hquery, int status_code)
               (hquery->want_family == AF_UNSPEC)) {
             /* if inet6 or unspec, start out with AAAA */
             hquery->sent_family = AF_INET6;
+            TRACE();
             ares_search(hquery->channel, hquery->name, C_IN, T_AAAA,
                         host_callback, hquery);
+            TRACE();
           }
           else {
             hquery->sent_family = AF_INET;
+            TRACE();
             ares_search(hquery->channel, hquery->name, C_IN, T_A,
                         host_callback, hquery);
+            TRACE();
           }
+          TRACE();
           return;
 
         case 'f':
           /* Host file lookup */
+          TRACE();
           status = file_lookup(hquery->name, hquery->want_family, &host);
+          TRACE();
 
           /* this status check below previously checked for !ARES_ENOTFOUND,
              but we should not assume that this single error code is the one
@@ -172,7 +187,9 @@ static void next_lookup(struct host_query *hquery, int status_code)
           break;
         }
     }
+  TRACE();
   end_hquery(hquery, status, NULL);
+  TRACE();
 }
 
 static void host_callback(void *arg, int status, int timeouts,

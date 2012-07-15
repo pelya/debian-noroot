@@ -352,4 +352,9 @@ long ares__tvdiff(struct timeval t1, struct timeval t2);
 #include "../lib/memdebug.h"
 #endif
 
+/*
+#define TRACE() fprintf(stderr, "%s: %s:%d\n", __FUNCTION__, __FILE__, __LINE__)
+*/
+#define TRACE()
+
 #endif /* __ARES_PRIVATE_H */

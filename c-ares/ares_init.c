@@ -111,6 +111,7 @@ static char *try_config(char *s, const char *opt, char scc);
 
 int ares_init(ares_channel *channelptr)
 {
+  TRACE();
   return ares_init_options(channelptr, NULL, 0);
 }
 
@@ -136,20 +137,24 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
   }
 #endif
 
+  TRACE();
   if (ares_library_initialized() != ARES_SUCCESS)
     return ARES_ENOTINITIALIZED;
 
+  TRACE();
   channel = malloc(sizeof(struct ares_channeldata));
   if (!channel) {
     *channelptr = NULL;
     return ARES_ENOMEM;
   }
 
+  TRACE();
   now = ares__tvnow();
 
   /* Set everything to distinguished values so we know they haven't
    * been set yet.
    */
+  TRACE();
   channel->flags = -1;
   channel->timeout = -1;
   channel->tries = -1;
@@ -178,9 +183,11 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
   memset(&channel->local_dev_name, 0, sizeof(channel->local_dev_name));
   channel->local_ip4 = 0;
   memset(&channel->local_ip6, 0, sizeof(channel->local_ip6));
+  TRACE();
 
   /* Initialize our lists of queries */
   ares__init_list_head(&(channel->all_queries));
+  TRACE();
   for (i = 0; i < ARES_QID_TABLE_SIZE; i++)
     {
       ares__init_list_head(&(channel->queries_by_qid[i]));
@@ -194,6 +201,7 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
    * precedence to lowest.
    */
 
+  TRACE();
   if (status == ARES_SUCCESS) {
     status = init_by_options(channel, options, optmask);
     if (status != ARES_SUCCESS)
@@ -212,6 +220,7 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
       DEBUGF(fprintf(stderr, "Error: init_by_resolv_conf failed: %s\n",
                      ares_strerror(status)));
   }
+  TRACE();
 
   /*
    * No matter what failed or succeeded, seed defaults to provide
@@ -223,15 +232,19 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
                    ares_strerror(status)));
 
   /* Generate random key */
+  TRACE();
 
   if (status == ARES_SUCCESS) {
+    TRACE();
     status = init_id_key(&channel->id_key, ARES_ID_KEY_LEN);
+    TRACE();
     if (status == ARES_SUCCESS)
       channel->next_id = ares__generate_new_id(&channel->id_key);
     else
       DEBUGF(fprintf(stderr, "Error: init_id_key failed: %s\n",
                      ares_strerror(status)));
   }
+  TRACE();
 
   if (status != ARES_SUCCESS)
     {
@@ -252,12 +265,15 @@ int ares_init_options(ares_channel *channelptr, struct ares_options *options,
       return status;
     }
 
+  TRACE();
   /* Trim to one server if ARES_FLAG_PRIMARY is set. */
   if ((channel->flags & ARES_FLAG_PRIMARY) && channel->nservers > 1)
     channel->nservers = 1;
 
+  TRACE();
   ares__init_servers_state(channel);
 
+  TRACE();
   *channelptr = channel;
   return ARES_SUCCESS;
 }
@@ -1688,6 +1704,7 @@ static void randomize_key(unsigned char* key,int key_data_len)
 {
   int randomized = 0;
   int counter=0;
+  TRACE();
 #ifdef WIN32
   BOOLEAN res;
   if (ares_fpSystemFunction036)
@@ -1698,18 +1715,22 @@ static void randomize_key(unsigned char* key,int key_data_len)
     }
 #else /* !WIN32 */
 #ifdef RANDOM_FILE
+  TRACE();
   FILE *f = fopen(RANDOM_FILE, "rb");
   if(f) {
     counter = aresx_uztosi(fread(key, 1, key_data_len, f));
     fclose(f);
   }
+  TRACE();
 #endif
 #endif /* WIN32 */
 
+  TRACE();
   if ( !randomized ) {
     for (;counter<key_data_len;counter++)
       key[counter]=(unsigned char)(rand() % 256);
   }
+  TRACE();
 }
 
 static int init_id_key(rc4_key* key,int key_data_len)
@@ -1728,20 +1749,28 @@ static int init_id_key(rc4_key* key,int key_data_len)
   for(counter = 0; counter < 256; counter++)
     /* unnecessary AND but it keeps some compilers happier */
     state[counter] = (unsigned char)(counter & 0xff);
+  TRACE();
   randomize_key(key->state,key_data_len);
+  TRACE();
   key->x = 0;
   key->y = 0;
   index1 = 0;
   index2 = 0;
+  TRACE();
   for(counter = 0; counter < 256; counter++)
   {
     index2 = (unsigned char)((key_data_ptr[index1] + state[counter] +
                               index2) % 256);
+  TRACE();
     ARES_SWAP_BYTE(&state[counter], &state[index2]);
+  TRACE();
 
     index1 = (unsigned char)((index1 + 1) % key_data_len);
+  TRACE();
   }
+  TRACE();
   free(key_data_ptr);
+  TRACE();
   return ARES_SUCCESS;
 }
 

@@ -20,8 +20,19 @@ ln -s $SDCARD_ROOT sdcard
 cat $SDCARD_UBUNTU/startx.sh > startx.sh
 chmod 755 startx.sh
 
+cat $SDCARD_UBUNTU/fakeroot.sh > fakeroot.sh
+chmod 755 fakeroot.sh
+
+cat $SDCARD_UBUNTU/xterm.sh > xterm.sh
+chmod 755 xterm.sh
+
 echo nameserver 8.8.8.8 > etc/resolv.conf
 echo nameserver 8.8.4.4 >> etc/resolv.conf
+
+echo 127.0.0.1	localhost >> etc/hosts
+echo 127.0.0.1	ubuntu >> etc/hosts
+
+echo ubuntu >> etc/hostname
 
 # Random post-install cmds
 mkdir var/run/dbus
@@ -38,6 +49,8 @@ for D in $SDCARD_UBUNTU/*.desktop; do
 cat $D > root/Desktop/`./busybox basename $D`
 chmod 644 root/Desktop/`./busybox basename $D`
 done
+ln -s $SDCARD_ROOT root/sdcard
+ln -s $SDCARD_ROOT root/Desktop/sdcard
 
 cat $SDCARD_UBUNTU/updatelibpaths.sh > updatelibpaths.sh
 chmod 755 updatelibpaths.sh
