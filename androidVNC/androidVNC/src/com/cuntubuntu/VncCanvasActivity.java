@@ -953,6 +953,11 @@ public class VncCanvasActivity extends Activity {
 		if (keyCode == KeyEvent.KEYCODE_MENU)
 			return super.onKeyDown(keyCode, evt);
 
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			openOptionsMenu();
+			return true;
+		}
+
 		return inputHandler.onKeyDown(keyCode, evt);
 	}
 
@@ -960,6 +965,11 @@ public class VncCanvasActivity extends Activity {
 	public boolean onKeyUp(int keyCode, KeyEvent evt) {
 		if (keyCode == KeyEvent.KEYCODE_MENU)
 			return super.onKeyUp(keyCode, evt);
+
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			//openOptionsMenu();
+			return true;
+		}
 
 		return inputHandler.onKeyUp(keyCode, evt);
 	}

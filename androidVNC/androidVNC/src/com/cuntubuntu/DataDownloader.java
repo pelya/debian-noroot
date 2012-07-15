@@ -201,30 +201,33 @@ class DataDownloader extends Thread
 			return;
 		}
 
-		checkCpuAbi();
+		//checkCpuAbi();
 
 		String [] downloadFiles = {
-			// "Ubuntu 11.04 with GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-2.zip",
+			// "Debian Lenny with GIMP image editor|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-lenny.zip",
 			"Debian Lenny with GIMP image editor|http://10.0.2.2/up/dist-gimp-lenny.zip",
 			// "Debian Lenny with office suite (AbiWord, Gnumeric, GIMP)|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-office-lenny.zip",
 			"Debian Lenny with office suite (AbiWord, Gnumeric, GIMP)|http://10.0.2.2/up/dist-office-lenny.zip",
-			// "Ubuntu 12.04 with XFCE4 desktop and GIMP|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-precise.zip"
-			"Ubuntu 11.04 with GIMP image editor|http://192.168.1.101/up/dist-gimp-precise.zip",
+			// "Ubuntu Precise with XFCE4 desktop and GIMP|http://sourceforge.net/projects/libsdl-android/files/ubuntu/dist-gimp-precise.zip"
+			"Ubuntu Precise with GIMP image editor|http://192.168.1.101/up/dist-gimp-precise.zip",
+			"Ubuntu Precise with office suite (AbiWord, Gnumeric, GIMP)|http://192.168.1.101/up/dist-office-precise.zip",
 		};
 		int [] freeSpaceRequired = {
 			190,
 			230,
-			200
+			185,
+			210,
 		};
 		int [] freeSpaceRequiredSd = {
 			440,
 			520,
-			290
+			290,
+			340,
 		};
 		int installOption = 0;
 		final int [] installOption2 = {0}; // To circumvent assignment to final variable
 		System.out.println("Ubuntu noroot: Kernel major version, as parsed from /proc/version: " + readKernelMajorVersion() + ".X.X");
-		if(readKernelMajorVersion() <= 2)
+		if(readKernelMajorVersion() <= 2 || (!android.os.Build.CPU_ABI.equalsIgnoreCase("armeabi-v7a") && !android.os.Build.CPU_ABI2.equalsIgnoreCase("armeabi-v7a")))
 		{
 			String [] downloadFiles2 = { downloadFiles[0], downloadFiles[1] };
 			int [] freeSpaceRequired2 = { freeSpaceRequired[0], freeSpaceRequired[1] };
