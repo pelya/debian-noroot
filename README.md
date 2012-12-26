@@ -43,9 +43,14 @@ You'll need Android SDK and following packages:
 autotools debhelper build-essentials qemu-user-static gcc-arm-linux-gnueabi
 
 Run
+```
 git submodule update --init
+```
 then run
+```
 ./build.sh
+```
+
 That should compile the .apk file. You'll also need to change URL to the Ubuntu image inside androidVNC/androidVNC/src/com/cuntubuntu/DataDownloader.java, in array named downloadFiles.
 If you want to recompile libfakechroot.so and libfakedns.so you wil need to do that from Debian Lenny,
 because default Ubuntu crosscompiler can only compile for CPU with hardware floating point support.
@@ -59,7 +64,12 @@ do following steps (you don't need to root your device for that):
 Open all relevant .sh files in the text editor, and try to understand what are they doing.
 
 Launch command
-cd img ; sudo ./img-debug.sh
+
+```
+cd img
+sudo ./img-debug.sh
+```
+
 it will prepare an image to be installed into directory /data/local/ubuntu on your device.
 It will automatically launch the script img/prepare-img.sh, which will mangle the symlinks inside the Ubuntu image,
 so that they will work inside fakechroot environment, also it will move all regular non-executable files and dirs which contain
@@ -71,38 +81,51 @@ You may also use Android 4 emulator, Android 2.3 will not work for debug image b
 Debian Lenny may be launched on armeabi CPU and Android 2.3 emulator, however creating the system image is complicated.
 
 Determine where your SD card is located (it can be accessed by symlink /sdcard/ on both of my devices and on emulator):
+```
 adb shell ls -l /sdcard/
+```
 That should print you your SD card contents, and all following instructions assume the path /sdcard/ to be working.
 
 Copy the resulting system image to SD card, and unzip it to directory named "ubuntu", using any file manager for Android.
 Do not use command "adb push img/dist-debug/ /sdcard/ubuntu/", it will not copy empty directories.
 
 Launch command:
+```
 adb shell
-
+```
 From ADB shell, execute following commands:
+ 
+```
 cd /data/local/ubuntu
 cat /sdcard/ubuntu/postinstall.sh > postinstall.sh
 chmod 755 postinstall.sh
 export SDCARD_UBUNTU=/sdcard/ubuntu
 ./postinstall.sh
+```
 
 That script will unpack the Ubuntu directory tree with binaries and symlinks into the current directory
 (which should be /data/local/ubuntu), and will do some extra preparations. It might output some errors, ignore them.
 
 Then you will be able to launch Ubuntu commands by running script ./chroot.sh from the directory /data/local/ubuntu, for example
+```
 ./chroot.sh bin/sh
+```
 will launch the familiar shell inside chroot, or bash shell (it does not work with Ubuntu 12.04)
+```
 ./chroot.sh bin/bash
+```
 
 The script chroot.sh contains a huge LD_LIBRARY_PATH variable, which lists all directories where a shared library can be found,
 that is because the loader lib/ld-linux.so.3 is confused by a fakechroot environment, and should be told explicitly what directories to search.
 You may get that list by running shell script img/getlibpaths.sh
 
 To start X VNC server launch following commands inside the shell:
-export DISPLAY_RESOLUTION=1280x800 (place your actual screen resolution here)
+
+```
+export DISPLAY_RESOLUTION=1280x800 #(place your actual screen resolution here)
 /fakeroot.sh
 /startx.sh
+```
 
 Install android-vnc-viewer app from the Google Play onto your device, and enter following connection info:
 Address: 127.0.0.1
