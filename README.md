@@ -25,7 +25,7 @@ There are several limitations:
 - No camera support. It's possible to add, however not worth the effort, since Ubuntu can access photos on your SD card.
 - No multitouch support - this is a limitation of Ubuntu itself.
 - No ability to move app to SD card (this can be mitigated in future by more dirty hacks).
-- No pseudo-terminal support, so XTerm and many utilities do not work.
+- No pseudo-terminal support, so XTerm and many utilities do not work. Most probably, that's also the reason why Gnome, KDE and Java do not work.
 
 This app was tested Samsung Galaxy Note, HTC Evo and Android 4 emulator. It does not run on Android 2.3 emulator.
 
@@ -135,5 +135,30 @@ Password: ubuntu
 Then click "Connect", then you should be able to interact with your Ubuntu installation through the graphical interface.
 You can then launch random commands, like "xeyes" or "xev" from the Bash shell, and see them appear on the device screen.
 The error messages dumped to the Bash shell are invaluable source of information about what you need to fix to make each particular application work.
+
 As of now, LibreOffice does not work because Java cannot be launched (however there's native Android port of LibreOffice in the works now,
 so there's not much point in making it work inside Ubuntu environment).
+
+Also, Gnome, KDE and LXDE desktop environments do not work, only XFCE4 works, that's most probably because of missing pseudo-TTY support.
+If you want to add pseudo-TTY support, you need to implement another LD_PRELOAD-ed library, libfakepty.so or something like that,
+which will emulate following system calls in user space (you don't need to do any kernel stuff, PTYs will be shared only between processes inside chroot):
+- openpty
+- posix_openpt
+- forkpty
+- getttyent
+- setttyent
+- endttyent
+- getttynam
+- isatty
+- login_tty
+- ttyname
+- ttyname_r
+- ttyslot
+- ptsname
+- ptsname_r
+- getpt
+- grantpt
+- unlockpt
+- everything mentioned in "man termios" page
+- subset of ioctl calls which are related to pseudo-terminals - see "man tty_ioctl" and "man console_ioctl"
+Not all of these calls are used everywhere, I think it's enough to implement only the calls referenced by XTerm binary.
