@@ -40,7 +40,21 @@ Development.
 ============
 
 You'll need Android SDK and following packages:
-autotools debhelper build-essentials qemu-user-static gcc-arm-linux-gnueabi
+For Ubuntu 12.04:
+```
+sudo apt-get install autotools debhelper build-essentials qemu-user-static gcc-arm-linux-gnueabi
+```
+For Debian Jessie:
+```
+sudo apt-get install autoconf automake debhelper build-essential libtool qemu-user-static emdebian-archive-keyring
+echo deb http://www.emdebian.org/debian/ testing main | sudo tee /etc/apt/sources.list.d/emdebian.list
+sudo apt-get update
+sudo apt-get install g++-4.7-arm-linux-gnueabi
+mkdir ~/bin
+cd ~/bin
+ln -s /usr/bin/arm-linux-gnueabi-gcc-4.7 arm-linux-gnueabi-gcc
+ln -s /usr/bin/arm-linux-gnueabi-g++-4.7 arm-linux-gnueabi-g++
+```
 
 Run
 ```

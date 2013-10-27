@@ -6,4 +6,4 @@
 	url = git://github.com/pelya/commandergenius.git
 [submodule "xserver"]
 	path = xserver
-	url = git://github.com/pelya/xserver.git
+	url = git://github.com/pelya/xserver-xsdl.git
