@@ -10,7 +10,6 @@ ROOTPATH=/data/data/com.cuntubuntu
 echo DIST $DIST ROOTPATH $ROOTPATH
 
 rm -rf $DIST-sd $DIST.zip
-mkdir $DIST-sd
 cd $DIST
 rm -f var/cache/apt/archives/*.deb
 find -type f var/log -delete
@@ -27,7 +26,10 @@ find -type l | while read LINK; do
 	fi
 done
 
+if [ -n "$OFFLOAD_SDCARD" ]; then
 echo "Offloading directories to SD card"
+
+mkdir $DIST-sd
 
 find -type d | sed 's@^[.]/@@' | while read F; do
 	[ -d "$F" ] || continue # Previous iteration might have messed dir structure
@@ -69,6 +71,9 @@ find -type f -executable -o -type f -size "+4k" -exec file {} \; | grep -v 'ELF 
 	mv "$F" "../$DIST-sd/$ESCAPED"
 	ln -s "$ROOTPATH/sd/$ESCAPED" "$F"
 done
+else
+echo "Offloading files to SD card not done, use 'env OFFLOAD_SDCARD=1 $0'"
+fi
 
 touch var/cache/apt/pkgcache.bin var/cache/apt/srcpkgcache.bin
 for F in var/cache/apt/*.bin var/cache/debconf/templates*  \
@@ -90,9 +95,13 @@ done
 #find -name "*.so*" -o -type f -exec file {} \; | grep 'ELF 32' | sed 's@^\([^ ]*\): .*@\1@' | while read F; do echo $F > /dev/stderr ; upx --best $F > /dev/null 2>&1 ; done
 #echo "Before UPX: $BEFORE_UPX after UPX: `du -h -s .`"
 
+cp ../../dist/* .
+if [ -n "$OFFLOAD_SDCARD" ]; then
 tar c * | gzip > ../$DIST-sd/binaries.tar.gz
 cd ../$DIST-sd
-cp ../../dist/* .
 zip -r ../$DIST.zip .
 chmod a+rw ../$DIST.zip ../$DIST .
+else
+tar c * | gzip -9 > ../$DIST.tar.gz
+fi
 cd ..

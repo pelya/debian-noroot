@@ -13,11 +13,3 @@ cd c-ares
 [ -e ../libfakedns.so ] || { make -j4 CFLAGS="-march=armv5te -msoft-float" LDFLAGS="-march=armv5te -msoft-float" && cp -f .libs/libcares.so ../libfakedns.so && arm-linux-gnueabi-strip ../libfakedns.so || fail ; }
 cd ..
 
-cd androidVNC/ZoomerWithKeys
-[ -e local.properties ] || android update project -p . || fail
-ant debug || fail
-cd ../androidVNC
-rm -rf bin/*
-[ -e local.properties ] || android update project -p . || fail
-ant debug && cp -f bin/Ubuntu-debug.apk ../.. || fail
-cd ../..
