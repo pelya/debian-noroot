@@ -167,3 +167,4 @@ which will emulate following system calls in user space (you don't need to do an
 - subset of ioctl calls which are related to pseudo-terminals - see "man tty_ioctl" and "man console_ioctl"
 
 Not all of these calls are used everywhere, I think it's enough to implement only the calls referenced by XTerm binary.
+Cygwin implements pseudo-terminals (inside file winsup/cygwin/fhandler_termios.cc), it may be possible to reuse it's code.
