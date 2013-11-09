@@ -10,4 +10,6 @@ sleep 1
 		xfce4-panel &
 	}
 } &
+gimp &
+inkscape &
 wait

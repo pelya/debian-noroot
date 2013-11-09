@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channel name="xfwm4" version="1.0">
+  <property name="general" type="empty">
+    <property name="double_click_time" type="int" value="1000"/>
+    <property name="double_click_distance" type="int" value="25"/>
+  </property>
+</channel>

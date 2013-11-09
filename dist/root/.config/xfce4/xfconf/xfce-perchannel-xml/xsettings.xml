@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channel name="xsettings" version="1.0">
+  <property name="Net" type="empty">
+    <property name="DoubleClickTime" type="int" value="1000"/>
+    <property name="DoubleClickDistance" type="int" value="25"/>
+    <property name="DndDragThreshold" type="int" value="20"/>
+  </property>
+</channel>

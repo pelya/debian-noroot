@@ -71,14 +71,12 @@ find -type f -executable -o -type f -size "+4k" -exec file {} \; | grep -v 'ELF 
 	mv "$F" "../$DIST-sd/$ESCAPED"
 	ln -s "$ROOTPATH/sd/$ESCAPED" "$F"
 done
-else
-echo "Offloading files to SD card not done, use 'env OFFLOAD_SDCARD=1 $0'"
-fi
 
+# var/cache/apt/*.bin var/cache/debconf/templates*  \
+#		var/lib/apt/lists/*_Packages var/lib/apt/lists/*_Sources var/lib/apt/lists/*_Translation-* \
+#		var/lib/aspell/* var/lib/gconf/defaults/* var/lib/usbutils/* var/lib/scrollkeeper/*/*
 touch var/cache/apt/pkgcache.bin var/cache/apt/srcpkgcache.bin
-for F in var/cache/apt/*.bin var/cache/debconf/templates*  \
-		var/lib/apt/lists/*_Packages var/lib/apt/lists/*_Sources var/lib/apt/lists/*_Translation-* \
-		var/lib/aspell/* var/lib/gconf/defaults/* var/lib/usbutils/* var/lib/scrollkeeper/*/* ; do
+for F in var/cache/apt/*.bin var/lib/apt/lists/*_Packages var/lib/apt/lists/*_Sources var/lib/apt/lists/*_Translation-* ; do
 	[ -n "`find $F -type f`" ] || continue
 
 	echo "$F"
@@ -87,6 +85,11 @@ for F in var/cache/apt/*.bin var/cache/debconf/templates*  \
 	mv "$F" "../$DIST-sd/$ESCAPED"
 	ln -s "$ROOTPATH/sd/$ESCAPED" "$F"
 done
+else
+echo "Offloading files to SD card not done, use 'env OFFLOAD_SDCARD=1 $0'"
+fi
+
+
 
 # Processing binaries through UPX will make them unusable on Android
 
@@ -95,7 +98,7 @@ done
 #find -name "*.so*" -o -type f -exec file {} \; | grep 'ELF 32' | sed 's@^\([^ ]*\): .*@\1@' | while read F; do echo $F > /dev/stderr ; upx --best $F > /dev/null 2>&1 ; done
 #echo "Before UPX: $BEFORE_UPX after UPX: `du -h -s .`"
 
-cp ../../dist/* .
+cp -a ../../dist/* .
 if [ -n "$OFFLOAD_SDCARD" ]; then
 tar c * | gzip > ../$DIST-sd/binaries.tar.gz
 cd ../$DIST-sd

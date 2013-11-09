@@ -41,13 +41,15 @@ sudo apt-get install autotools debhelper build-essentials qemu-user-static gcc-a
 For Debian Jessie:
 ```
 sudo apt-get install autoconf automake debhelper build-essential libtool qemu-user-static debootstrap emdebian-archive-keyring
-echo deb http://www.emdebian.org/debian/ testing main | sudo tee /etc/apt/sources.list.d/emdebian.list
+echo deb http://www.emdebian.org/debian/ unstable main | sudo tee /etc/apt/sources.list.d/emdebian.list
 sudo apt-get update
-sudo apt-get install g++-4.7-arm-linux-gnueabi
+sudo apt-get install g++-4.7-arm-linux-gnueabi g++-4.7-arm-linux-gnueabihf
 mkdir ~/bin
 cd ~/bin
 ln -s /usr/bin/arm-linux-gnueabi-gcc-4.7 arm-linux-gnueabi-gcc
 ln -s /usr/bin/arm-linux-gnueabi-g++-4.7 arm-linux-gnueabi-g++
+ln -s /usr/bin/arm-linux-gnueabihf-gcc-4.7 arm-linux-gnueabihf-gcc
+ln -s /usr/bin/arm-linux-gnueabihf-g++-4.7 arm-linux-gnueabihf-g++
 ```
 
 Run
