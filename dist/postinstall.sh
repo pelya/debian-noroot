@@ -25,7 +25,14 @@ ls lib/ld-linux-armel.so.3 && ln -s ld-linux-armhf.so.3 lib/ld-linux.so.3
 ls lib/ld-linux-armhf.so.3 && ln -s ld-linux-armhf.so.3 lib/ld-linux.so.3
 
 echo "Adding user $USER ID $USER_ID"
-./chroot.sh bin/bash usr/bin/fakeroot-sysv usr/sbin/useradd -U -m -G sudo,staff -p '$1$nFL/I4tz$zHKmBfkaKmRRmWje1Mupm0' -u $USER_ID $USER 2>&1
+# This command fails on Galaxy Note 3
+#./chroot.sh bin/bash usr/bin/fakeroot-sysv usr/sbin/useradd -U -m -G sudo,staff -p '$1$nFL/I4tz$zHKmBfkaKmRRmWje1Mupm0' -u $USER_ID $USER 2>&1
+echo "$USER:x:$USER_ID:" >> etc/group
+echo "$USER:!::" >> etc/gshadow
+echo "$USER:x:$USER_ID:$USER_ID::/home/$USER:/bin/sh" >> etc/passwd
+echo "$USER:$1$nFL/I4tz$zHKmBfkaKmRRmWje1Mupm0:16019:0:99999:7:::" >> etc/shadow
+mkdir -p home/$USER
+./chroot.sh bin/cp -a -f etc/skel/.* home/$USER/ 2>&1
 ./chroot.sh bin/cp -a -f root/* root/.* home/$USER/ 2>&1
 
 echo "Postinstall script finished"
