@@ -21,3 +21,8 @@ ln -s $SDCARD root/Desktop/sdcard
 
 ls lib/ld-linux-armel.so.3 && ln -s ld-linux-armhf.so.3 lib/ld-linux.so.3
 ls lib/ld-linux-armhf.so.3 && ln -s ld-linux-armhf.so.3 lib/ld-linux.so.3
+
+#./chroot.sh usr/sbin/groupadd -g $USER_ID $USER
+#./chroot.sh usr/sbin/useradd -g $USER_ID -G sudo,staff -m $USER
+./chroot.sh usr/sbin/useradd -U -m -G sudo,staff -p '$1$nFL/I4tz$zHKmBfkaKmRRmWje1Mupm0' -u $USER_ID $USER
+./chroot.sh bin/cp -a -f root home/$USER
