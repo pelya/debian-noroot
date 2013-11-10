@@ -25,7 +25,7 @@ ls lib/ld-linux-armel.so.3 && ln -s ld-linux-armhf.so.3 lib/ld-linux.so.3
 ls lib/ld-linux-armhf.so.3 && ln -s ld-linux-armhf.so.3 lib/ld-linux.so.3
 
 echo "Adding user $USER ID $USER_ID"
-./chroot.sh usr/sbin/useradd -U -m -G sudo,staff -p '$1$nFL/I4tz$zHKmBfkaKmRRmWje1Mupm0' -u $USER_ID $USER 2>&1
-./chroot.sh bin/cp -a -f root home/$USER 2>&1
+./chroot.sh bin/bash usr/bin/fakeroot-sysv usr/sbin/useradd -U -m -G sudo,staff -p '$1$nFL/I4tz$zHKmBfkaKmRRmWje1Mupm0' -u $USER_ID $USER 2>&1
+./chroot.sh bin/cp -a -f root/* root/.* home/$USER/ 2>&1
 
 echo "Postinstall script finished"
