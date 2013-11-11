@@ -16,7 +16,7 @@ cd c-ares
 [ -e ares_config.h ] || LIBS=-Wl,--version-script=exports.txt \
 	./configure --enable-shared --host=arm-linux-gnueabihf --prefix=/usr || fail
 [ -e ../libfakedns.so ] || {
-	make -j4 CFLAGS="-march=armv7-a" LDFLAGS="-march=armv7-a" .libs/libcares.so && \
+	make -j4 CFLAGS="-march=armv7-a" LDFLAGS="-march=armv7-a" libcares.la && \
 	cp -f .libs/libcares.so ../libfakedns.so && \
 	arm-linux-gnueabihf-strip ../libfakedns.so || fail
 }
