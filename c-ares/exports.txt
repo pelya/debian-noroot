@@ -1,0 +1,15 @@
+FAKEDNS {
+	global:
+		freeaddrinfo;
+		getaddrinfo;
+		gethostbyaddr;
+		gethostbyaddr_r;
+		gethostbyname;
+		gethostbyname2;
+		gethostbyname2_r;
+		gethostbyname_r;
+		getnameinfo;
+		getservbyport;
+
+	local: *;         # hide everything else
+};
