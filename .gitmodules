@@ -1,3 +1,6 @@
 [submodule "fakechroot"]
 	path = fakechroot
 	url = git://github.com/pelya/fakechroot.git
+[submodule "android-shmem"]
+	path = android-shmem
+	url = git@github.com:pelya/android-shmem.git
