@@ -9,7 +9,7 @@ cd fakechroot
 	make -j4 CFLAGS="-march=armv7-a -fpic" LDFLAGS="-march=armv7-a" V=1 && \
 	cp -f src/.libs/libfakechroot.so .. && \
 	arm-linux-gnueabihf-strip ../libfakechroot.so || fail
-}
+} || exit 1
 cd ..
 
 cd c-ares
@@ -19,18 +19,18 @@ cd c-ares
 	make -j4 CFLAGS="-march=armv7-a -fpic" LDFLAGS="-march=armv7-a" libcares.la && \
 	cp -f .libs/libcares.so ../libfakedns.so && \
 	arm-linux-gnueabihf-strip ../libfakedns.so || fail
-}
+} || exit 1
 cd ..
 
 [ -e libfakedns.so ] || {
 	arm-linux-gnueabihf-gcc -march=armv7-a -shared -fpic fakedns/*.c -I c-ares c-ares/.libs/libcares.a -o libfakedns.so && \
 	arm-linux-gnueabihf-strip libfakedns.so || fail
-}
+} || exit 1
 
 [ -e libdisableselinux.so ] || {
 	arm-linux-gnueabihf-gcc -march=armv7-a -shared -fpic disableselinux/*.c -o libdisableselinux.so && \
 	arm-linux-gnueabihf-strip libdisableselinux.so || fail
-}
+} || exit 1
 
 [ -e libandroid-shmem.so ] || {
 	[ -e android-shmem/LICENSE ] || {

@@ -24,6 +24,7 @@ It's licensed the same way as C-Ares lib is, if anyone cares about that.
 #include "ares.h"
 #include "ares_setup.h"
 #include "ares_private.h"
+#include "ares_platform.h"
 
 #define dbg(...)
 /*
@@ -67,17 +68,10 @@ FAKEDNS_EXTERN int getaddrinfo (__const char *__restrict __name,
 			__const struct addrinfo *__restrict __req,
 			struct addrinfo **__restrict __pai);
 
-
-FAKEDNS_EXTERN int getnameinfo (const struct sockaddr *__restrict __sa,
-			socklen_t __salen, char *__restrict __host,
-			socklen_t __hostlen, char *__restrict __serv,
-			socklen_t __servlen, int __flags);
-/*
 FAKEDNS_EXTERN int getnameinfo (__const struct sockaddr *__restrict __sa,
 			socklen_t __salen, char *__restrict __host,
 			socklen_t __hostlen, char *__restrict __serv,
 			socklen_t __servlen, unsigned int __flags);
-*/
 
 FAKEDNS_EXTERN struct servent *getservbyport(int port, const char *proto);
 
@@ -676,10 +670,10 @@ static void getnameinfo_callback(void *arg, int status, int timeouts, char *node
 	}
 }
 
-int getnameinfo (const struct sockaddr *__restrict __sa,
+int getnameinfo (__const struct sockaddr *__restrict __sa,
 			socklen_t __salen, char *__restrict __host,
 			socklen_t __hostlen, char *__restrict __serv,
-			socklen_t __servlen, int __flags)
+			socklen_t __servlen, unsigned int __flags)
 {
 	ares_channel channel;
 	int nfds, c;
