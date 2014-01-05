@@ -18,6 +18,9 @@ mkdir root/Desktop
 ln -s $SDCARD root/sdcard
 ln -s $SDCARD root/Desktop/sdcard
 
+# Export GIMP config to SD card
+case x$UNSECURE_STORAGE_DIR in x ) echo ... > /dev/null;; * ) ./busybox cp -r root/.gimp-2.8/ $UNSECURE_STORAGE_DIR/gimp ; ./busybox rm -rf root/.gimp-2.8 ; ln -s $UNSECURE_STORAGE_DIR/gimp root/.gimp-2.8 ; ln -s $UNSECURE_STORAGE_DIR/gimp/fonts root/.fonts ;; esac
+
 echo "Updating lib paths"
 ./updatelibpaths.sh > libpaths
 
