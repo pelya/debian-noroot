@@ -5,6 +5,8 @@ echo "SDCARD path: $SDCARD"
 echo "Changing curdir to: $SECURE_STORAGE_DIR"
 case x$SECURE_STORAGE_DIR in x ) echo ... > /dev/null;; * ) cd $SECURE_STORAGE_DIR;; esac
 
+umask 002
+
 ln -s $SDCARD sdcard
 
 echo "Creating necessary directories"
