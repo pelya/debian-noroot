@@ -1,6 +1,6 @@
 #!/bin/sh
 echo "This image requires kernel 2.6.29, it will run on emulator"
-# libreoffice-calc,libreoffice-draw,libreoffice-impress,libreoffice-math,libreoffice-writer
+
 DIR=dist-gimp-wheezy
 DEST=/data/data/org.gimp.inkscape/files
 sudo rm -r -f $DIR
@@ -12,5 +12,3 @@ sudo qemu-debootstrap --arch=armhf --verbose \
         wheezy $DIR http:/$APT_CACHER/ftp.ua.debian.org/debian/ \
 && cat sources-jessie.list | sed 's/jessie/wheezy/g' | sudo tee $DIR/etc/apt/sources.list > /dev/null \
 && sudo ./prepare-img.sh $DIR $DEST
-
-# base-files,fakeroot,fakechroot,xfonts-base,strace,synaptic,xfce4,metacity,razorqt,openbox,fluxbox,fbpager,gimp,inkscape
