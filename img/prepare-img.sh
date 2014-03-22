@@ -7,6 +7,8 @@ ROOTPATH=/data/data/com.cuntubuntu
 [ -z "$1" ] || DIST="$1"
 [ -z "$2" ] || ROOTPATH="$2"
 
+ARCH="$3"
+
 echo DIST $DIST ROOTPATH $ROOTPATH
 
 rm -rf $DIST-sd $DIST.zip
@@ -89,8 +91,6 @@ else
 echo "Offloading files to SD card not done, use 'env OFFLOAD_SDCARD=1 $0'"
 fi
 
-
-
 # Processing binaries through UPX will make them unusable on Android
 
 #echo "Packing binaries (10 Mb savings)"
@@ -99,6 +99,7 @@ fi
 #echo "Before UPX: $BEFORE_UPX after UPX: `du -h -s .`"
 
 cp -a ../../dist/* .
+[ -z "$ARCH" ] || cp -a -f ../../dist-$ARCH/* .
 if [ -n "$OFFLOAD_SDCARD" ]; then
 tar c * | gzip > ../$DIST-sd/binaries.tar.gz
 cd ../$DIST-sd
