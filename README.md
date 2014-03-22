@@ -14,7 +14,7 @@ Also, this is NOT official Debian.org release.
 
 There are several limitations:
 
-- It cannot mess up your Android device.
+- It cannot mess up your Android device, because it's a regular well-behaved Android app, which does not need root access.
 - No pseudo-terminal support, so Libreoffice, XTerm and many other applications do not work.
 - Desktop environment is slightly broken.
 - Package manager crashes often.
@@ -170,3 +170,6 @@ which will emulate following system calls in user space (you don't need to do an
 
 Not all of these calls are used everywhere, I think it's enough to implement only the calls referenced by XTerm binary.
 Cygwin implements pseudo-terminals (inside file winsup/cygwin/fhandler_termios.cc), it may be possible to reuse it's code.
+
+There is an alternative fakechroot method, called proot, which looks very promising, but I did not test it yet:
+http://proot.me/
