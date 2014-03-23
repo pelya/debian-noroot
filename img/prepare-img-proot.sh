@@ -16,18 +16,6 @@ cd $DIST
 rm -f var/cache/apt/archives/*.deb
 find var/log -type f -delete
 
-echo "Pointing absolute symlinks to the chrooted path"
-find -type l | while read LINK; do
-	TARGET="`readlink $LINK`"
-	if echo "$TARGET" | grep '^/' > /dev/null; then
-		echo "$LINK -> $TARGET - absolute link, expanding"
-		rm "$LINK"
-		ln -s "$ROOTPATH$TARGET" "$LINK"
-	else
-		echo "$LINK -> $TARGET - relative link, ignoring"
-	fi
-done
-
 if [ -n "$OFFLOAD_SDCARD" ]; then
 echo "Offloading directories to SD card"
 
@@ -100,12 +88,13 @@ fi
 
 cp -a ../../dist/* .
 [ -z "$ARCH" ] || cp -a -f ../../dist-$ARCH/* .
+
 if [ -n "$OFFLOAD_SDCARD" ]; then
 tar c * | gzip > ../$DIST-sd/binaries.tar.gz
 cd ../$DIST-sd
 zip -r ../$DIST.zip .
 chmod a+rw ../$DIST.zip ../$DIST .
 else
-tar c * | gzip -9 > ../$DIST.tar.gz
+tar czf ..//$DIST.tar.gz *
 fi
 cd ..

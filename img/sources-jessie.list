@@ -1,11 +1,11 @@
-deb http://ftp.ua.debian.org/debian/ jessie contrib main non-free
-deb-src http://ftp.ua.debian.org/debian/ jessie main contrib
+deb http://http.debian.net/debian/ jessie contrib main non-free
+#deb-src http://http.debian.net/debian/ jessie main contrib
 
 deb http://security.debian.org/ jessie/updates contrib main non-free
-deb-src http://security.debian.org/ jessie/updates main contrib
+#deb-src http://security.debian.org/ jessie/updates main contrib
 
-deb http://ftp.ua.debian.org/debian/ jessie-updates contrib main non-free
-deb-src http://ftp.ua.debian.org/debian/ jessie-updates main contrib
+deb http://http.debian.net/debian/ jessie-updates contrib main non-free
+#deb-src http://http.debian.net/debian/ jessie-updates main contrib
 
-deb http://ftp.ua.debian.org/debian/ jessie-backports contrib main non-free
-deb-src http://ftp.ua.debian.org/debian/ jessie-backports contrib main
+deb http://http.debian.net/debian/ jessie-backports contrib main non-free
+#deb-src http://http.debian.net/debian/ jessie-backports contrib main

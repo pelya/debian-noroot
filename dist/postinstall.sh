@@ -8,12 +8,15 @@ case x$SECURE_STORAGE_DIR in x ) echo ... > /dev/null;; * ) cd $SECURE_STORAGE_D
 umask 002
 
 ln -s $SDCARD sdcard
+mkdir -p .$SDCARD
 
 echo "Creating necessary directories"
 # Random post-install cmds
 mkdir var/run/dbus
 mkdir var/run/xauth
-ln -s `pwd`/usr/bin/dbus-launch `pwd`/bin/dbus-launch
+mkdir run/dbus
+mkdir run/xauth
+ln -s /usr/bin/dbus-launch bin/dbus-launch
 mkdir var/lib/dbus
 mkdir root
 mkdir root/Desktop
