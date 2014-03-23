@@ -4,6 +4,6 @@
 [submodule "android-shmem"]
 	path = android-shmem
 	url = git@github.com:pelya/android-shmem.git
-[submodule "proot"]
-	path = proot
+[submodule "proot-src"]
+	path = proot-src
 	url = git@github.com:cedric-vincent/PRoot.git
