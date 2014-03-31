@@ -7,6 +7,8 @@ case x$SECURE_STORAGE_DIR in x ) echo ... > /dev/null;; * ) cd $SECURE_STORAGE_D
 
 umask 002
 
+SDCARD=`./busybox realpath $SDCARD`
+
 ln -s $SDCARD sdcard
 mkdir -p .$SDCARD
 

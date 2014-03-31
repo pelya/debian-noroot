@@ -1,5 +1,5 @@
 #!/bin/sh
-[ "$USER" = "root" ] || { echo This script needs to be run with superuser privileges; exit 1;}
+[ "$USER" = "root" ] || { echo This script needs to be run with superuser privileges; exit 1; }
 
 DIST=dist-minimal
 
@@ -7,8 +7,12 @@ DIST=dist-minimal
 
 ARCH="$2"
 
-PWD=`pwd`
+CURDIR=`pwd`
+
 cd $DIST
+
+qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/sbin/update-apt-xapian-index
+
 rm -f var/cache/apt/archives/*.deb
 find var/log -type f -delete
 
@@ -19,8 +23,9 @@ find var/log -type f -delete
 #find -name "*.so*" -o -type f -exec file {} \; | grep 'ELF 32' | sed 's@^\([^ ]*\): .*@\1@' | while read F; do echo $F > /dev/stderr ; upx --best $F > /dev/null 2>&1 ; done
 #echo "Before UPX: $BEFORE_UPX after UPX: `du -h -s .`"
 
-cp -a $PWD/../dist/* .
-[ -z "$ARCH" ] || cp -a -f $PWD/../dist-$ARCH/* .
+cp -a $CURDIR/../dist/* .
+[ -z "$ARCH" ] || cp -a -f $CURDIR/../dist-$ARCH/* .
 
 ARCHIVE=`echo $DIST | sed 's@/.*@@'`
+cd $CURDIR/$ARCHIVE
 tar czf ../$ARCHIVE.tar.gz *
