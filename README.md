@@ -54,7 +54,7 @@ ln -s /usr/bin/arm-linux-gnueabihf-g++-4.7 arm-linux-gnueabihf-g++
 
 Run
 ```
-git submodule update --init
+git submodule update --init --recursive
 ./build.sh
 ```
 That should compile the libfakechroot.so and libfakedns.so files.

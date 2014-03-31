@@ -11,4 +11,4 @@ sudo qemu-debootstrap --arch=i386 --verbose \
         --include=`cat img-gimp-wheezy.pkg` \
         wheezy $DIR http:/$APT_CACHER/ftp.ua.debian.org/debian/ \
 && cat sources-jessie.list | sed 's/jessie/wheezy/g' | sudo tee $DIR/etc/apt/sources.list > /dev/null \
-&& sudo ./prepare-img.sh $DIR $DEST
+&& sudo ./prepare-img.sh $DIR $DEST i386

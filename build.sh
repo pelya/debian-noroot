@@ -62,7 +62,8 @@ cd ..
 
 [ -e proot ] || {
 	cd proot-src/src
-	env CC=arm-linux-gnueabihf-gcc CFLAGS="-I../../talloc-2.1.0 -Wall -Wextra -O2" LDFLAGS="-L../.. -ltalloc" V=1 make -e || fail
+	env CC=arm-linux-gnueabihf-gcc CFLAGS="-I../../talloc-2.1.0 -Wall -Wextra -O2" LDFLAGS="-L../.. -ltalloc -static" V=1 make -e || fail
 	cp proot ../../
 	cd ../..
+	arm-linux-gnueabihf-strip -g proot
 } || fail
