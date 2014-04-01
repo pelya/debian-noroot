@@ -11,17 +11,15 @@ CURDIR=`pwd`
 
 cd $DIST
 
+cat $CURDIR/sources-jessie.list | sed 's/jessie/wheezy/g' | tee etc/apt/sources.list > /dev/null
+
+qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/bin/apt-get update
+qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/bin/apt-get upgrade -y
 qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/sbin/update-apt-xapian-index
+qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/sbin/update-alternatives --set fakeroot /usr/bin/fakeroot-tcp
 
 rm -f var/cache/apt/archives/*.deb
-find var/log -type f -delete
-
-# Processing binaries through UPX will make them unusable on Android
-
-#echo "Packing binaries (10 Mb savings)"
-#BEFORE_UPX="`du -h -s .`"
-#find -name "*.so*" -o -type f -exec file {} \; | grep 'ELF 32' | sed 's@^\([^ ]*\): .*@\1@' | while read F; do echo $F > /dev/stderr ; upx --best $F > /dev/null 2>&1 ; done
-#echo "Before UPX: $BEFORE_UPX after UPX: `du -h -s .`"
+#find var/log -type f -delete
 
 cp -a $CURDIR/../dist/* .
 [ -z "$ARCH" ] || cp -a -f $CURDIR/../dist-$ARCH/* .
