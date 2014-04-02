@@ -5,11 +5,8 @@ No root required! Should work on any high-end device!
 Unleash full unrestricted desktop environment onto your mobile device!
 Instant frustration guaranteed! (unless you're using mouse or stylus).
 
-GIMP image editor, or office suite pre-installed (AbiWord and Gnumeric, there's no PowerPoint support).
-You will need 180 Mb free on internal data storage (or 200 Mb for office suite), plus 320 Mb on SD card.
-
 This app is NOT full Debian OS - it is a compatibility layer, which allows you to run Debian applications.
-Your phone is NOT rooted during installation. 
+Your phone is NOT rooted during installation.
 Also, this is NOT official Debian.org release.
 
 There are several limitations:
@@ -34,12 +31,6 @@ Development.
 ============
 
 You'll need Android SDK and following packages:
-For Ubuntu 12.04:
-```
-sudo apt-get install autotools debhelper build-essentials qemu-user-static gcc-arm-linux-gnueabi debootstrap
-```
-For Debian Jessie:
-```
 sudo apt-get install autoconf automake debhelper build-essential libtool qemu-user-static debootstrap emdebian-archive-keyring
 echo deb http://www.emdebian.org/debian/ unstable main | sudo tee /etc/apt/sources.list.d/emdebian.list
 sudo apt-get update
@@ -90,86 +81,9 @@ then install resulting .apk file on your Android device, and run it.
 
 The scripts for creating Ubuntu images are located in directory "img".
 
-If you want to dig into things deeper, and launch your own Ubuntu image from the Android debug console (ADB),
-do following steps (you don't need to root your device for that):
-
-Open all relevant .sh files in the text editor, and try to understand what are they doing.
-
-Launch command
-
+This app uses PRoot for chrooting into Debian rootfs,
+the fakechroot method is not used anymore.
+PRoot can be downloaded from:
 ```
-cd img
-sudo ./img-debug-squeeze.sh
-```
-
-it will prepare an image to be installed into directory /data/local/ubuntu on your device.
-It will automatically launch the script img/prepare-img.sh, which will mangle the symlinks inside the Ubuntu image,
-so that they will work inside fakechroot environment.
-
-Plug your Android device into the PC via USB cable, and enable USB debugging inside Settings in Android device,
-or launch Android 4 emulator with at least 1 Gb internal storage size.
-Android 2.3 will not work for debug image because it needs armeabi-v7a CPU.
-
-Launch command:
-```
-adb shell mkdir /data/local/tmp/img
-adb push img/img-debug-squeeze.tar.gz /data/local/tmp/img
-adb push dist/busybox /data/local/tmp/img
-adb shell
-cd /data/local/tmp/img
-chmod 755 busybox
-./busybox tar xvf dist-debug-squeeze.tar.gz
-./postinstall.sh
-```
-
-That script will unpack the Ubuntu directory tree with binaries and symlinks into the current directory
-(which should be /data/local/tmp/img), and will do some extra preparations. It might output some errors, ignore them.
-
-Then you will be able to launch Debian commands by running script ./chroot.sh from the directory /data/local/tmp/img, for example
-```
-./chroot.sh bin/sh
-```
-will launch the familiar shell inside chroot, or bash shell (it does not work with Ubuntu 12.04)
-```
-./chroot.sh bin/bash
-```
-To launch graphical desktop, launch from inside chroot-ed shell
-```
-./startx.sh
-```
-
-The script chroot.sh contains a huge LD_LIBRARY_PATH variable, which lists all directories where a shared library can be found,
-that is because the loader lib/ld-linux.so.3 is confused by a fakechroot environment, and should be told explicitly what directories to search.
-You may get that list by running shell script img/getlibpaths.sh
-
-As of now, LibreOffice does not work because Java cannot be launched (however there's native Android port of LibreOffice in the works now,
-so there's not much point in making it work inside Ubuntu environment).
-
-Also, Gnome, KDE and LXDE desktop environments do not work, only XFCE4 works, that's most probably because of missing pseudo-TTY support.
-If you want to add pseudo-TTY support, you need to implement another LD_PRELOAD-ed library, libfakepty.so or something like that,
-which will emulate following system calls in user space (you don't need to do any kernel stuff, PTYs will be shared only between processes inside chroot):
-- openpty
-- posix_openpt
-- forkpty
-- getttyent
-- setttyent
-- endttyent
-- getttynam
-- isatty
-- login_tty
-- ttyname
-- ttyname_r
-- ttyslot
-- ptsname
-- ptsname_r
-- getpt
-- grantpt
-- unlockpt
-- everything mentioned in "man termios" page
-- subset of ioctl calls which are related to pseudo-terminals - see "man tty_ioctl" and "man console_ioctl"
-
-Not all of these calls are used everywhere, I think it's enough to implement only the calls referenced by XTerm binary.
-Cygwin implements pseudo-terminals (inside file winsup/cygwin/fhandler_termios.cc), it may be possible to reuse it's code.
-
-There is an alternative fakechroot method, called proot, which looks very promising, but I did not test it yet:
 http://proot.me/
+```
