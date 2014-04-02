@@ -17,7 +17,7 @@ qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf u
 qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/bin/apt-get upgrade -y
 qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/sbin/update-apt-xapian-index
 qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/sbin/update-alternatives --set fakeroot /usr/bin/fakeroot-tcp
-qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/sbin/dpkg-reconfigure locales
+#qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/sbin/dpkg-reconfigure locales
 
 rm -f var/cache/apt/archives/*.deb
 #find var/log -type f -delete

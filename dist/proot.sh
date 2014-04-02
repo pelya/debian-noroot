@@ -13,4 +13,4 @@ export SHELL=/bin/bash
 export LD_LIBRARY_PATH=
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export "LD_PRELOAD=/libdisableselinux.so /libandroid-shmem.so"
-./proot -r `pwd` -w / -b /dev -b /proc -b /sys -b /system -b $SDCARD bin/sh -l "$@"
+./proot -r `pwd` -w / -b /dev -b /proc -b /sys -b /system -b $SDCARD "$@"
