@@ -31,6 +31,7 @@ Development.
 ============
 
 You'll need Android SDK and following packages:
+```
 sudo apt-get install autoconf automake debhelper build-essential libtool qemu-user-static debootstrap emdebian-archive-keyring
 echo deb http://www.emdebian.org/debian/ unstable main | sudo tee /etc/apt/sources.list.d/emdebian.list
 sudo apt-get update
