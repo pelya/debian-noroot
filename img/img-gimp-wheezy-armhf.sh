@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "This image requires kernel 2.6.29, it will run on emulator"
 
-DIR=dist-gimp-wheezy-armhf
+DIR=dist-gimp-wheezy-armeabi-v7a/img
 DEST=/data/data/org.gimp.inkscape/files
 sudo rm -r -f $DIR
 APT_CACHER=
@@ -11,4 +11,4 @@ sudo qemu-debootstrap --arch=armhf --verbose \
         --include=`cat img-gimp-wheezy.pkg` \
         wheezy $DIR http:/$APT_CACHER/ftp.ua.debian.org/debian/ \
 && cat sources-jessie.list | sed 's/jessie/wheezy/g' | sudo tee $DIR/etc/apt/sources.list > /dev/null \
-&& sudo ./prepare-img.sh $DIR $DEST
+&& sudo ./prepare-img-proot.sh $DIR
