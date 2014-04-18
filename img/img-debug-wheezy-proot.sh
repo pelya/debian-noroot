@@ -8,4 +8,4 @@ sudo qemu-debootstrap --arch=armhf --verbose \
         --components=main,universe,restricted,multiverse \
         --include=fakeroot,libc-bin,dpkg,xfonts-base,x11-xserver-utils,xfce4-panel,xfdesktop4,xfwm4,xfce4-session,thunar,xfconf,xfce4-settings,tango-icon-theme,apt,synaptic,apt-xapian-index,xterm \
         wheezy $DIR http:/$APT_CACHER/ftp.ua.debian.org/debian/ \
-&& sudo ./prepare-img-proot.sh $DIR
+&& sudo ./prepare-img-proot.sh --update-packages $DIR
