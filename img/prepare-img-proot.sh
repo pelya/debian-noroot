@@ -19,14 +19,17 @@ cd $DIST
 
 cat $CURDIR/sources-jessie.list | sed 's/jessie/wheezy/g' | tee etc/apt/sources.list > /dev/null
 
+CHROOT_CMD="qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot ."
+[ "$ARCH" = "x86" ] && CHROOT_CMD="chroot ."
+
 $UPDATE_PACKAGES && {
-	qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/bin/apt-get update
-	qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/bin/apt-get upgrade -y
-	qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/sbin/update-apt-xapian-index
-	#qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/sbin/dpkg-reconfigure locales
+	$CHROOT_CMD usr/bin/apt-get update
+	$CHROOT_CMD usr/bin/apt-get upgrade -y
+	$CHROOT_CMD usr/sbin/update-apt-xapian-index
+	#$CHROOT_CMD usr/sbin/dpkg-reconfigure locales
 }
 
-qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot . usr/sbin/update-alternatives --set fakeroot /usr/bin/fakeroot-tcp
+$CHROOT_CMD usr/sbin/update-alternatives --set fakeroot /usr/bin/fakeroot-tcp
 
 rm -f var/cache/apt/archives/*.deb
 rm -f var/log/bootstrap.log
