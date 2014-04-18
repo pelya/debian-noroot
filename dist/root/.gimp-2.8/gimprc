@@ -7,7 +7,8 @@
 # Preferences dialog.
 
 (show-brush-outline no)
-(show-paint-tool-cursor no)
+(cursor-mode tool-crosshair)
+(cursor-format bitmap)
 (default-view
     (show-menubar yes)
     (show-statusbar yes)

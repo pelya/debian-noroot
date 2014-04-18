@@ -8,8 +8,6 @@ SDCARD=`./busybox realpath $SDCARD`
 
 export HOME=/home/$USER
 export SHELL=/bin/bash
-#export USER=root
-#export LD_LIBRARY_PATH=/lib:/usr/local/lib:/usr/lib
 export LD_LIBRARY_PATH=
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export "LD_PRELOAD=/libdisableselinux.so /libandroid-shmem.so"

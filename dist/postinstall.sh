@@ -28,12 +28,6 @@ ln -s $SDCARD root/Desktop/sdcard
 # Export GIMP config to SD card
 case x$UNSECURE_STORAGE_DIR in x ) echo ... > /dev/null;; * ) ./busybox cp -r root/.gimp-2.8/ $UNSECURE_STORAGE_DIR/gimp ; ./busybox rm -rf root/.gimp-2.8 ; ln -s $UNSECURE_STORAGE_DIR/gimp root/.gimp-2.8 ; ln -s $UNSECURE_STORAGE_DIR/gimp/fonts root/.fonts ;; esac
 
-echo "Updating lib paths"
-./updatelibpaths.sh > libpaths
-
-ls lib/ld-linux-armel.so.3 && ln -s ld-linux-armhf.so.3 lib/ld-linux.so.3
-ls lib/ld-linux-armhf.so.3 && ln -s ld-linux-armhf.so.3 lib/ld-linux.so.3
-
 echo "Adding user $USER ID $USER_ID"
 # This command fails on Galaxy Note 3
 #./chroot.sh bin/bash usr/bin/fakeroot-sysv usr/sbin/useradd -U -m -G sudo,staff  '$1$nFL/I4tz$zHKmBfkaKmRRmWje1Mupm0' -u $USER_ID $USER 2>&1
