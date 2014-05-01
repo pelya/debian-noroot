@@ -1,1 +1,1 @@
-fakeroot,xfonts-base,x11-xserver-utils,xfce4-panel,xfdesktop4,xfwm4,xfce4-session,thunar,xfconf,xfce4-settings,tango-icon-theme,shiki-colors-xfwm-theme,gtk2-engines-murrine,gtk3-engines-unico,xterm,gimp,inkscape
+fakeroot,xfonts-base,x11-xserver-utils,xfce4-panel,xfdesktop4,xfwm4,xfce4-session,thunar,xfconf,xfce4-settings,tango-icon-theme,shiki-colors-xfwm-theme,gtk2-engines-murrine,gtk3-engines-unico,xterm,gimp,inkscape,locales

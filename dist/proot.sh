@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-case x$SECURE_STORAGE_DIR in x ) echo ... > /dev/null;; * ) cd $SECURE_STORAGE_DIR/img;; esac
+case x$SECURE_STORAGE_DIR in x ) echo "Error: no SECURE_STORAGE_DIR envvar defined";; * ) cd $SECURE_STORAGE_DIR/img;; esac
 
 case x$SDCARD in x ) export SDCARD=$EXTERNAL_STORAGE;; esac
 
