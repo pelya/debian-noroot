@@ -46,6 +46,8 @@ rm -f var/log/bootstrap.log
 
 $SAVE_PACKAGES_LIST || {
 	rm -f var/cache/apt/*.bin
+	rm -f var/lib/apt/lists/*
+	cp -a /var/lib/apt/lists/lock var/lib/apt/lists/
 }
 
 cp -a $CURDIR/../dist/* .
