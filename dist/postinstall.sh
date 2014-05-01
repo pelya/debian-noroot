@@ -22,6 +22,7 @@ ln -s /usr/bin/dbus-launch bin/dbus-launch
 mkdir var/lib/dbus
 mkdir root
 mkdir root/Desktop
+touch etc/mtab
 ln -s $SDCARD root/sdcard
 ln -s $SDCARD root/Desktop/sdcard
 
@@ -39,6 +40,7 @@ mkdir home/$USER
 ./busybox cp -a -f etc/skel/.* home/$USER/ 2>&1
 ./busybox cp -a -f root/* root/.* home/$USER/ 2>&1
 
+echo "Updating locales for lang $LANG"
 ./proot.sh ./postinstall-locales.sh
 
 echo "Postinstall script finished"
