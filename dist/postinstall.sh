@@ -2,8 +2,8 @@
 
 case x$SDCARD in x ) export SDCARD=$EXTERNAL_STORAGE;; esac
 echo "SDCARD path: $SDCARD"
-echo "Changing curdir to: $SECURE_STORAGE_DIR"
-case x$SECURE_STORAGE_DIR in x ) echo ... > /dev/null;; * ) cd $SECURE_STORAGE_DIR;; esac
+case x$SECURE_STORAGE_DIR in x ) echo "Error: no SECURE_STORAGE_DIR envvar defined";; * ) cd $SECURE_STORAGE_DIR/img;; esac
+echo "Changing curdir to: $SECURE_STORAGE_DIR/img"
 
 umask 002
 
