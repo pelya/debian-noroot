@@ -8,9 +8,11 @@ echo "Changing curdir to: $SECURE_STORAGE_DIR/img"
 umask 002
 
 SDCARD=`./busybox realpath $SDCARD`
+UNSECURE_STORAGE_DIR=`./busybox realpath $UNSECURE_STORAGE_DIR`
 
 ln -s $SDCARD sdcard
 mkdir -p .$SDCARD
+mkdir -p .$UNSECURE_STORAGE_DIR
 
 echo "Creating necessary directories"
 # Random post-install cmds
