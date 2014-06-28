@@ -4,5 +4,6 @@
   <property name="general" type="empty">
     <property name="double_click_time" type="int" value="1000"/>
     <property name="double_click_distance" type="int" value="25"/>
+    <property name="workspace_count" type="int" value="1"/>
   </property>
 </channel>
