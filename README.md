@@ -68,7 +68,7 @@ x11proto-xext-dev x11proto-xf86bigfont-dev \
 x11proto-xf86dga-dev x11proto-xf86dri-dev \
 x11proto-xf86vidmode-dev x11proto-xinerama-dev \
 libxmuu-dev libxt-dev libsm-dev libice-dev \
-libxrender-dev libxrandr-dev curl
+libxrender-dev libxrandr-dev curl autoconf automake
 
 git clone git@github.com:pelya/commandergenius.git
 git submodule update --init project/jni/application/xserver/xserver
