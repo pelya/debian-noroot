@@ -31,12 +31,12 @@ cd ..
 
 } # ===== libfakechroot and libfakedns =====
 
-[ -e libdisableselinux.so ] || {
-	arm-linux-gnueabihf-gcc -march=armv7-a -shared -fpic disableselinux/*.c -o libdisableselinux.so && \
-	arm-linux-gnueabihf-strip libdisableselinux.so || fail
+[ -e dist/libdisableselinux.so ] || {
+	arm-linux-gnueabihf-gcc -march=armv7-a -shared -fpic disableselinux/*.c -o dist/libdisableselinux.so && \
+	arm-linux-gnueabihf-strip dist/libdisableselinux.so || fail
 } || fail
 
-[ -e libandroid-shmem.so ] || {
+[ -e dist/libandroid-shmem.so ] || {
 	[ -e android-shmem/LICENSE ] || {
 		cd ..
 		git submodule update --init android/android-shmem || fail
@@ -49,9 +49,9 @@ cd ..
 	} || exit 1
 
 	cd android-shmem
-	arm-linux-gnueabihf-gcc -march=armv7-a -shared -fpic -std=gnu99 *.c -I . -I libancillary \
-		-o ../libandroid-shmem.so -Wl,--version-script=exports.txt -lc -lpthread && \
-	arm-linux-gnueabihf-strip ../libandroid-shmem.so || fail
+	arm-linux-gnueabihf-gcc -march=armv7-a -shared -fpic -std=gnu99 -flto *.c -I . -I libancillary \
+		-o ../dist/libandroid-shmem.so -Wl,--version-script=exports.txt -lc -lpthread && \
+	arm-linux-gnueabihf-strip ../dist/libandroid-shmem.so || fail
 	cd ..
 } || fail
 
@@ -59,22 +59,22 @@ cd ..
 	[ -e talloc-2.1.0 ] || curl http://www.samba.org/ftp/talloc/talloc-2.1.0.tar.gz | tar xvz || fail
 	cd talloc-2.1.0
 	make clean
-	env CC=arm-linux-gnueabihf-gcc ./configure build --cross-compile --cross-execute='qemu-arm-static /usr/arm-linux-gnueabihf/lib/ld-linux.so.3 --library-path /usr/arm-linux-gnueabihf/lib' || fail
+	env CC=arm-linux-gnueabihf-gcc CFLAGS="-flto" LD=arm-linux-gnueabihf-gcc LDFLAGS="-flto" ./configure build --cross-compile --cross-execute='qemu-arm-static /usr/arm-linux-gnueabihf/lib/ld-linux.so.3 --library-path /usr/arm-linux-gnueabihf/lib' || fail
 	#cp -f libtalloc.so ../libtalloc.so || fail
 	ar rcs ../libtalloc.a bin/default/talloc*.o # bin/default/lib/replace/replace*.o 
 	cd ..
 } || fail
 
-[ -e proot ] || {
+[ -e dist/proot ] || {
 	cd proot-src/src
 	make clean
-	env CC=arm-linux-gnueabihf-gcc CFLAGS="-I../../talloc-2.1.0 -Wall -Wextra -O2" LDFLAGS="-L../.. -ltalloc -static" V=1 make -e || fail
-	cp proot ../../
+	env CC=arm-linux-gnueabihf-gcc CFLAGS="-I../../talloc-2.1.0 -Wall -Wextra -O2 -flto" LDFLAGS="-L../.. -ltalloc -static -flto" V=1 make -e || fail
+	cp proot ../../dist/
 	cd ../..
-	arm-linux-gnueabihf-strip proot
+	arm-linux-gnueabihf-strip dist/proot
 } || fail
 
-CFLAGSx86="-march=i686 -mtune=atom -mstackrealign -msse3 -mfpmath=sse -m32"
+CFLAGSx86="-march=i686 -mtune=atom -mstackrealign -msse3 -mfpmath=sse -m32 -flto"
 
 [ -e dist-x86/libdisableselinux.so ] || {
 	gcc $CFLAGSx86 -shared -fpic disableselinux/*.c -o dist-x86/libdisableselinux.so && \
@@ -92,7 +92,7 @@ CFLAGSx86="-march=i686 -mtune=atom -mstackrealign -msse3 -mfpmath=sse -m32"
 [ -e libtalloc-x86.a ] || {
 	cd talloc-2.1.0
 	make clean
-	env CC=gcc CFLAGS="$CFLAGSx86" LD=gcc LDFLAGS="$CFLAGSx86" ./configure build || fail
+	env CC=gcc CFLAGS="$CFLAGSx86 -fno-lto" LD=gcc LDFLAGS="$CFLAGSx86 -fno-lto" ./configure build || fail
 	#cp -f libtalloc.so ../libtalloc.so || fail
 	ar rcs ../libtalloc-x86.a bin/default/talloc*.o # bin/default/lib/replace/replace*.o 
 	cd ..
