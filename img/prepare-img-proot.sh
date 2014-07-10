@@ -1,6 +1,8 @@
 #!/bin/sh
 [ "$USER" = "root" ] || { echo This script needs to be run with superuser privileges; exit 1; }
 
+set -x
+
 UPDATE_PACKAGES=false
 if [ "$1" = "--update-packages" ]; then
 	UPDATE_PACKAGES=true
@@ -10,6 +12,15 @@ fi
 SAVE_PACKAGES_LIST=false
 if [ "$1" = "--save-packages-list" ]; then
 	SAVE_PACKAGES_LIST=true
+	shift
+fi
+
+STRIP=false
+STRIP_FILES=""
+if [ "$1" = "--strip" ]; then
+	STRIP=true
+	shift
+	STRIP_FILES="$1"
 	shift
 fi
 
@@ -28,7 +39,6 @@ cat $CURDIR/sources-jessie.list | sed 's/jessie/wheezy/g' | tee etc/apt/sources.
 CHROOT_CMD="qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot ."
 [ "$ARCH" = "x86" ] && CHROOT_CMD="chroot ."
 
-
 $UPDATE_PACKAGES && {
 	$CHROOT_CMD usr/bin/apt-get update
 	$CHROOT_CMD usr/bin/apt-get upgrade -y
@@ -42,12 +52,22 @@ $CHROOT_CMD usr/sbin/update-alternatives --set fakeroot /usr/bin/fakeroot-tcp
 
 rm -f var/cache/apt/archives/*.deb
 rm -f var/log/bootstrap.log
-#find var/log -type f -delete
 
 $SAVE_PACKAGES_LIST || {
 	rm -f var/cache/apt/*.bin
-	rm -f var/lib/apt/lists/*
+	find var/lib/apt/lists/ -type f -delete
 	cp -a /var/lib/apt/lists/lock var/lib/apt/lists/
+}
+
+$STRIP && {
+	$CHROOT_CMD apt-get remove -y `cat $CURDIR/strip.list`
+	find var/log -type f -delete
+	rm -rf usr/share/locale/*
+	rm -rf usr/share/doc/*
+	rm -rf usr/share/man/*
+	rm -rf usr/share/info/*
+	rm -rf var/cache/debconf/*
+	rm -rf $STRIP_FILES
 }
 
 cp -a $CURDIR/../dist/* .
