@@ -18,7 +18,7 @@ STRIP_LIST=`cat strip.list`
 STRIP_LIST=`echo $STRIP_LIST | sed 's/ /,/g'`
 sudo qemu-debootstrap --arch=$ARCH_DEBIAN --verbose \
 		--components=main,contrib,non-free \
-		--include=fakeroot,libc-bin,cups,apt,smbclient \
+		--include=fakeroot,libc-bin,cups,apt,smbclient,cups-browsed \
 		--exclude=$STRIP_LIST \
 		$DIST $DIR http:/$APT_CACHER/ftp.ua.debian.org/debian/ 2>&1 | tee -a debootstrap.log \
 && cat sources-jessie.list | sed "s/jessie/$DIST/g" | sudo tee $DIR/etc/apt/sources.list > /dev/null \
