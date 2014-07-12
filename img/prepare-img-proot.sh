@@ -24,6 +24,18 @@ if [ "$1" = "--strip" ]; then
 	shift
 fi
 
+XZ=false
+if [ "$1" = "--xz" ]; then
+	XZ=true
+	shift
+fi
+
+NOARCHIVE=false
+if [ "$1" = "--noarchive" ]; then
+	NOARCHIVE=true
+	shift
+fi
+
 DIST=dist-minimal
 
 [ -z "$1" ] || DIST="$1"
@@ -60,19 +72,26 @@ $SAVE_PACKAGES_LIST || {
 }
 
 $STRIP && {
-	$CHROOT_CMD apt-get remove -y `cat $CURDIR/strip.list`
+	#$CHROOT_CMD apt-get remove -y `cat $CURDIR/strip.list`
 	find var/log -type f -delete
 	rm -rf usr/share/locale/*
 	rm -rf usr/share/doc/*
 	rm -rf usr/share/man/*
 	rm -rf usr/share/info/*
 	rm -rf var/cache/debconf/*
+	rm -rf var/cache/apt/*.bin
 	rm -rf $STRIP_FILES
 }
 
 cp -a $CURDIR/../dist/* .
 [ -z "$ARCH" ] || cp -a -f $CURDIR/../dist-$ARCH/* .
 
+$NOARCHIVE && exit
+
 ARCHIVE=`echo $DIST | sed 's@/.*@@'`
 cd $CURDIR/$ARCHIVE
-tar czf ../$ARCHIVE.tar.gz *
+if $XZ; then
+	tar c * | pxz -8 > ../$ARCHIVE.tar.xz
+else
+	tar czf ../$ARCHIVE.tar.gz *
+fi
