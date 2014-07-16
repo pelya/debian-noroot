@@ -25,5 +25,6 @@ sudo qemu-debootstrap --arch=$ARCH_DEBIAN --verbose \
 && sudo ./prepare-img-proot.sh --strip "usr/share/X11 usr/share/zoneinfo usr/share/calendar" --noarchive $DIR $ARCH_ANDROID
 done
 cd dist-cups-$DIST
+rm -f img-armeabi-v7a/busybox img-x86/busybox
 ../merge-dirs.sh img-armeabi-v7a img-x86 img
-tar c * | pxz -8 > ../dist-cups-$DIST.tar.xz
+tar c * | xz -8 > ../dist-cups-$DIST.tar.xz

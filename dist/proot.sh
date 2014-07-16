@@ -1,12 +1,14 @@
 #!/system/bin/sh
 
+case x$SDCARD in x ) SDCARD=/sdcard;; esac
+
 case x$SECURE_STORAGE_DIR in x ) echo > /dev/null;; * ) cd $SECURE_STORAGE_DIR/img;; esac
 
 case x$SDCARD in x ) export SDCARD=$EXTERNAL_STORAGE;; esac
 case x$UNSECURE_STORAGE_DIR in x ) export UNSECURE_STORAGE_DIR=$SDCARD;; esac
 
-SDCARD=`./busybox realpath $SDCARD`
-UNSECURE_STORAGE_DIR=`./busybox realpath $UNSECURE_STORAGE_DIR`
+SDCARD=`../busybox realpath $SDCARD`
+UNSECURE_STORAGE_DIR=`../busybox realpath $UNSECURE_STORAGE_DIR`
 
 export HOME=/home/$USER
 export SHELL=/bin/bash
