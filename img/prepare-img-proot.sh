@@ -72,7 +72,7 @@ $SAVE_PACKAGES_LIST || {
 }
 
 $STRIP && {
-	echo 'Yes, do as I say!' | $CHROOT_CMD apt-get remove -y --force-yes --auto-remove `cat $CURDIR/strip.list`
+	#echo 'Yes, do as I say!' | $CHROOT_CMD apt-get remove -y --force-yes --auto-remove `cat $CURDIR/strip.list`
 	find var/log -type f -delete
 	rm -rf usr/share/locale/*
 	rm -rf usr/share/doc/*
