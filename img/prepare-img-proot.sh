@@ -17,10 +17,13 @@ fi
 
 STRIP=false
 STRIP_FILES=""
+STRIP_PACKAGES=""
 if [ "$1" = "--strip" ]; then
 	STRIP=true
 	shift
 	STRIP_FILES="$1"
+	shift
+	STRIP_PACKAGES="$1"
 	shift
 fi
 
@@ -73,6 +76,7 @@ $SAVE_PACKAGES_LIST || {
 
 $STRIP && {
 	#echo 'Yes, do as I say!' | $CHROOT_CMD apt-get remove -y --force-yes --auto-remove `cat $CURDIR/strip.list`
+	$CHROOT_CMD apt-get remove -y --force-yes --auto-remove `cat $CURDIR/strip.list` $STRIP_PACKAGES
 	find var/log -type f -delete
 	rm -rf usr/share/locale/*
 	rm -rf usr/share/doc/*

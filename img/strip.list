@@ -1,4 +1,3 @@
 vim-tiny vim-common manpages info man-db groff-base tasksel tasksel-data
-aptitude aptitude-common nano rsyslog libxapian22 libept1.4.12 debconf-i18n
-logrotate cron isc-dhcp-client isc-dhcp-common kmod libkmod2 udev
-e2fsprogs libblkid1 libmount1 mount dmidecode iptables util-linux
+aptitude aptitude-common nano rsyslog libxapian22 debconf-i18n
+logrotate cron isc-dhcp-client isc-dhcp-common kmod dmidecode iptables
