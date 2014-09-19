@@ -5,6 +5,7 @@
     <property name="FailsafeSessionName" type="empty"/>
     <property name="SessionName" type="string" value="Default"/>
     <property name="SaveOnExit" type="bool" value="false"/>
+    <property name="PromptOnLogout" type="bool" value="false"/>
   </property>
   <property name="sessions" type="empty">
     <property name="Failsafe" type="empty">
@@ -23,6 +24,14 @@
     </property>
   </property>
   <property name="splash" type="empty">
-    <property name="Engine" type="empty"/>
+    <property name="Engine" type="string" value="simple"/>
+    <property name="engines" type="empty">
+      <property name="simple" type="empty">
+        <property name="Font" type="string" value="Sans Bold 10"/>
+        <property name="BgColor" type="string" value="#000000"/>
+        <property name="FgColor" type="string" value="#ffffff"/>
+        <property name="Image" type="string" value=""/>
+      </property>
+    </property>
   </property>
 </channel>
