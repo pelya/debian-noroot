@@ -2,7 +2,7 @@
 Comment[en_US]=
 Comment=
 Encoding=UTF-8
-Exec=fakeroot-tcp /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin  xterm -bg black -fg green -xrm 'XTerm*faceName: DroidSansMono' -xrm 'XTerm*faceSize: 8' -hold -e "echo 'Install audio support, it will use 100Mb of storage. Continue? y/n' ; read line ; [ -$line = -y ] || exit ; apt-get update; apt-get -y install pulseaudio ; echo 'Log out and restart this app to enable audio'"
+Exec=fakeroot-tcp /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin xterm -bg black -fg green -xrm 'XTerm*faceName: DroidSansMono' -xrm 'XTerm*faceSize: 8' -hold -e "echo 'Install audio support, it will use 100Mb of storage. Continue? y/n' ; read line ; [ -$line = -y ] || exit ; apt-get update; apt-get -y install pulseaudio ; echo 'Log out and restart this app to enable audio'"
 GenericName[en_US]=
 GenericName=
 Icon=utilities-terminal
