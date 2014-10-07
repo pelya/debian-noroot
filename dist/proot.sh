@@ -9,7 +9,8 @@ case x$SDCARD in x ) export SDCARD=$EXTERNAL_STORAGE;; esac
 SDCARD=`../busybox realpath $SDCARD`
 STORAGE="-b $SDCARD"
 for F in 0 1 2 3 4 5 6 7 8 9; do
-	case x`eval echo \\$UNSECURE_STORAGE_DIR_$F` in x ) echo > /dev/null;; * ) STORAGE="$STORAGE -b `eval echo \\$UNSECURE_STORAGE_DIR_$F`";; esac
+	DIR=`eval echo \\$UNSECURE_STORAGE_DIR_$F`
+	case x$DIR in x ) echo > /dev/null;; * ) STORAGE="$STORAGE -b $DIR" ; mkdir -p $DIR ;; esac
 done
 echo "STORAGE $STORAGE"
 
