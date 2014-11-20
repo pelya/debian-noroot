@@ -1,22 +1,116 @@
-diff --git a/src/path/temp.c b/src/path/temp.c
-index 27d06a5..d50c531 100644
---- a/src/path/temp.c
-+++ b/src/path/temp.c
-@@ -9,6 +9,7 @@
- #include <talloc.h>     /* talloc(3), */
+diff --git a/src/cli/care.c b/src/cli/care.c
+index 8ece4bc..85a2bb6 100644
+--- a/src/cli/care.c
++++ b/src/cli/care.c
+@@ -175,9 +175,9 @@ static Binding *new_concealing_binding(Tracee *tracee, const char *path, bool mu
+ 	}
  
- #include "cli/notice.h"
-+#include "binding.h"
+ 	if (S_ISDIR(statl.st_mode))
+-		temp = create_temp_directory(NULL, tracee->tool_name);
++		temp = create_temp_directory(NULL, get_root(tracee), tracee->tool_name);
+ 	else
+-		temp = create_temp_file(NULL, tracee->tool_name);
++		temp = create_temp_file(NULL, get_root(tracee), tracee->tool_name);
+ 	if (temp == NULL) {
+ 		note(tracee, WARNING, INTERNAL, "can't conceal %s", path);
+ 		return NULL;
+diff --git a/src/execve/enter.c b/src/execve/enter.c
+index d5a9685..56227fa 100644
+--- a/src/execve/enter.c
++++ b/src/execve/enter.c
+@@ -39,6 +39,7 @@
+ #include "execve/elf.h"
+ #include "path/path.h"
+ #include "path/temp.h"
++#include "path/binding.h"
+ #include "tracee/tracee.h"
+ #include "syscall/syscall.h"
+ #include "syscall/sysnum.h"
+@@ -475,7 +476,7 @@ static char *extract_loader(const Tracee *tracee, bool want_32bit_version)
+ 	char *loader_path = NULL;
+ 	FILE *file = NULL;
+ 
+-	file = open_temp_file(NULL, "prooted");
++	file = open_temp_file(NULL, get_root(tracee), "prooted");
+ 	if (file == NULL)
+ 		goto end;
+ 	fd = fileno(file);
+diff --git a/src/execve/exit.c b/src/execve/exit.c
+index 19cdbd9..7dff252 100644
+--- a/src/execve/exit.c
++++ b/src/execve/exit.c
+@@ -117,7 +117,7 @@ static int bind_proc_pid_auxv(const Tracee *ptracee)
+ 		TALLOC_FREE(binding);
+ 	}
+ 
+-	host_path = create_temp_file(ptracee->ctx, "auxv");
++	host_path = create_temp_file(ptracee->ctx, get_root(ptracee), "auxv");
+ 	if (host_path == NULL)
+ 		return -1;
+ 
+diff --git a/src/extension/care/final.c b/src/extension/care/final.c
+index 0a5f9fd..8f42225 100644
+--- a/src/extension/care/final.c
++++ b/src/extension/care/final.c
+@@ -37,6 +37,7 @@
+ #include "execve/ldso.h"
+ #include "path/path.h"
+ #include "path/temp.h"
++#include "path/binding.h"
+ #include "cli/note.h"
  
  /**
-  * Remove recursively the content of the current working directory.
-@@ -35,12 +36,14 @@ static int clean_temp_cwd()
- 		notice(NULL, WARNING, SYSTEM, "can't readlink '/proc/self/cwd'");
+@@ -160,7 +161,7 @@ static int archive_re_execute_sh(Care *care)
+ 	int status;
+ 	int i;
+ 
+-	file = open_temp_file(NULL, "care");
++	file = open_temp_file(NULL, get_root(tracee), "care");
+ 	if (file == NULL) {
+ 		note(NULL, ERROR, INTERNAL, "can't create temporary file for 're-execute.sh'");
+ 		return -1;
+@@ -292,7 +293,7 @@ static int archive_concealed_accesses_txt(const Care *care)
+ 	if (care->concealed_accesses == NULL)
+ 		return 0;
+ 
+-	file = open_temp_file(NULL, "care");
++	file = open_temp_file(NULL, get_root(tracee), "care");
+ 	if (file == NULL) {
+ 		note(NULL, WARNING, INTERNAL,
+ 			"can't create temporary file for 'concealed-accesses.txt'");
+@@ -314,7 +315,7 @@ static int archive_readme_txt(const Care *care)
+ {
+ 	FILE *file;
+ 
+-	file = open_temp_file(NULL, "care");
++	file = open_temp_file(NULL, get_root(tracee), "care");
+ 	if (file == NULL) {
+ 		note(NULL, WARNING, INTERNAL, "can't create temporary file for 'README.txt'");
+ 		return -1;
+diff --git a/src/path/glue.c b/src/path/glue.c
+index a21c548..c2a4f2b 100644
+--- a/src/path/glue.c
++++ b/src/path/glue.c
+@@ -118,7 +118,7 @@ mode_t build_glue(Tracee *tracee, const char *guest_path, char host_path[PATH_MA
+ 	/* Create the temporary directory where the "glue" rootfs will
+ 	 * lie.  */
+ 	if (tracee->glue == NULL) {
+-		tracee->glue = create_temp_directory(NULL, tracee->tool_name);
++		tracee->glue = create_temp_directory(NULL, get_root(tracee), tracee->tool_name);
+ 		if (tracee->glue == NULL) {
+ 			note(tracee, ERROR, INTERNAL, "can't create glue rootfs");
+ 			return 0;
+diff --git a/src/path/temp.c b/src/path/temp.c
+index bbcfb5f..5b4c42d 100644
+--- a/src/path/temp.c
++++ b/src/path/temp.c
+@@ -35,12 +35,14 @@ static int clean_temp_cwd()
+ 		note(NULL, WARNING, SYSTEM, "can't readlink '/proc/self/cwd'");
  		return ++nb_errors;
  	}
 +#if 0
  	if (strncmp(prefix, P_tmpdir, length_tmpdir) != 0) {
- 		notice(NULL, ERROR, INTERNAL,
+ 		note(NULL, ERROR, INTERNAL,
  			"trying to remove a directory outside of '%s', "
  			"please report this error.\n", P_tmpdir);
  		return ++nb_errors;
@@ -25,12 +119,96 @@ index 27d06a5..d50c531 100644
  
  	dir = opendir(".");
  	if (dir == NULL) {
-@@ -217,7 +220,7 @@ static char *create_temp_name(const Tracee *tracee, const char *prefix)
- 	else
- 		context = tracee->ctx;
+@@ -202,14 +204,14 @@ static int remove_temp_file(char *path)
+  * auto-freed if @context is NULL.  This function returns NULL if an
+  * error occurred.
+  */
+-char *create_temp_name(TALLOC_CTX *context, const char *prefix)
++char *create_temp_name(TALLOC_CTX *context, const char *rootdir, const char *prefix)
+ {
+ 	char *name;
+ 
+ 	if (context == NULL)
+ 		context = talloc_autofree_context();
  
 -	name = talloc_asprintf(context, "%s/%s-%d-XXXXXX", P_tmpdir, prefix, getpid());
-+	name = talloc_asprintf(context, "%s/tmp/%s-%d-XXXXXX", get_root(tracee), prefix, getpid());
++	name = talloc_asprintf(context, "%s/tmp/%s-%d-XXXXXX", rootdir, prefix, getpid());
  	if (name == NULL) {
- 		notice(tracee, ERROR, INTERNAL, "can't allocate memory");
+ 		note(NULL, ERROR, INTERNAL, "can't allocate memory");
  		return NULL;
+@@ -225,11 +227,11 @@ char *create_temp_name(TALLOC_CTX *context, const char *prefix)
+  * error, otherwise the absolute path name to the created directory
+  * (@prefix-ed).
+  */
+-const char *create_temp_directory(TALLOC_CTX *context, const char *prefix)
++const char *create_temp_directory(TALLOC_CTX *context, const char *rootdir, const char *prefix)
+ {
+ 	char *name;
+ 
+-	name = create_temp_name(context, prefix);
++	name = create_temp_name(context, rootdir, prefix);
+ 	if (name == NULL)
+ 		return NULL;
+ 
+@@ -250,12 +252,12 @@ const char *create_temp_directory(TALLOC_CTX *context, const char *prefix)
+  * @context) is freed.  This function returns NULL on error,
+  * otherwise the absolute path name to the created file (@prefix-ed).
+  */
+-const char *create_temp_file(TALLOC_CTX *context, const char *prefix)
++const char *create_temp_file(TALLOC_CTX *context, const char *rootdir, const char *prefix)
+ {
+ 	char *name;
+ 	int fd;
+ 
+-	name = create_temp_name(context, prefix);
++	name = create_temp_name(context, rootdir, prefix);
+ 	if (name == NULL)
+ 		return NULL;
+ 
+@@ -275,13 +277,13 @@ const char *create_temp_file(TALLOC_CTX *context, const char *prefix)
+  * Like create_temp_file() but returns an open file stream to the
+  * created file.  It's up to the caller to close returned stream.
+  */
+-FILE* open_temp_file(TALLOC_CTX *context, const char *prefix)
++FILE* open_temp_file(TALLOC_CTX *context, const char *rootdir, const char *prefix)
+ {
+ 	char *name;
+ 	FILE *file;
+ 	int fd;
+ 
+-	name = create_temp_name(context, prefix);
++	name = create_temp_name(context, rootdir, prefix);
+ 	if (name == NULL)
+ 		return NULL;
+ 
+diff --git a/src/path/temp.h b/src/path/temp.h
+index faa9341..ed7ca73 100644
+--- a/src/path/temp.h
++++ b/src/path/temp.h
+@@ -25,9 +25,9 @@
+ 
+ #include <talloc.h>
+ 
+-extern char *create_temp_name(TALLOC_CTX *context, const char *prefix);
+-extern const char *create_temp_directory(TALLOC_CTX *context, const char *prefix);
+-extern const char *create_temp_file(TALLOC_CTX *context, const char *prefix);
+-extern FILE* open_temp_file(TALLOC_CTX *context, const char *prefix);
++extern char *create_temp_name(TALLOC_CTX *context, const char *rootdir, const char *prefix);
++extern const char *create_temp_directory(TALLOC_CTX *context, const char *rootdir, const char *prefix);
++extern const char *create_temp_file(TALLOC_CTX *context, const char *rootdir, const char *prefix);
++extern FILE* open_temp_file(TALLOC_CTX *context, const char *rootdir, const char *prefix);
+ 
+ #endif /* TEMP_H */
+diff --git a/src/syscall/socket.c b/src/syscall/socket.c
+index 381ae64..ed765d2 100644
+--- a/src/syscall/socket.c
++++ b/src/syscall/socket.c
+@@ -116,7 +116,7 @@ int translate_socketcall_enter(Tracee *tracee, word_t *address, int size)
+ 
+ 		/* The translated path is too long to fit the sun_path
+ 		 * array, so let's bind it to a shorter path.  */
+-		shorter_host_path = create_temp_name(tracee->ctx, "proot");
++		shorter_host_path = create_temp_name(tracee->ctx, get_root(tracee), "proot");
+ 		if (shorter_host_path == NULL || strlen(shorter_host_path) > sizeof_path)
+ 			return -EINVAL;
+ 
