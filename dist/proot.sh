@@ -22,4 +22,5 @@ JAVA_PATH=/usr/lib/jvm/default-java/jre/bin:/usr/lib/jvm/default-java/bin
 ls usr/lib/jvm/java-7-openjdk-*/bin > /dev/null 2>&1 && JAVA_PATH=/`echo usr/lib/jvm/java-7-openjdk-*/jre/bin`:/`echo usr/lib/jvm/java-7-openjdk-*/bin`
 export PATH=/usr/local/sbin:/usr/local/bin:$JAVA_PATH:/usr/sbin:/usr/bin:/sbin:/bin
 export "LD_PRELOAD=/libdisableselinux.so /libandroid-shmem.so"
+export PROOT_TMPDIR=`pwd`/tmp
 ./proot -r `pwd` -w / -b /dev -b /proc -b /sys -b /system $STORAGE "$@"

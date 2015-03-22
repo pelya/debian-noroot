@@ -56,7 +56,7 @@ cd ..
 } || fail
 
 [ -e libtalloc.a ] || {
-	[ -e talloc-2.1.0 ] || curl http://www.samba.org/ftp/talloc/talloc-2.1.0.tar.gz | tar xvz || fail
+	[ -e talloc-2.1.0 ] || curl -L http://www.samba.org/ftp/talloc/talloc-2.1.0.tar.gz | tar xvz || fail
 	cd talloc-2.1.0
 	make clean
 	env CC=arm-linux-gnueabihf-gcc CFLAGS="-flto -fpic" LD=arm-linux-gnueabihf-gcc LDFLAGS="-flto" ./configure build --cross-compile --cross-execute='qemu-arm-static /usr/arm-linux-gnueabihf/lib/ld-linux.so.3 --library-path /usr/arm-linux-gnueabihf/lib' || fail
