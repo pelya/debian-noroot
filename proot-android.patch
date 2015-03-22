@@ -1,3 +1,24 @@
+diff --git a/src/loader/assembly-arm.h b/src/loader/assembly-arm.h
+index 365b822..5ae3d74 100644
+--- a/src/loader/assembly-arm.h
++++ b/src/loader/assembly-arm.h
+@@ -29,13 +29,13 @@
+  */
+ #define BRANCH(stack_pointer, destination) do {			\
+ 	asm volatile (						\
+-		"// Restore initial stack pointer.	\n\t"	\
++		"/* Restore initial stack pointer. */	\n\t"	\
+ 		"mov sp, %0				\n\t"	\
+ 		"					\n\t"	\
+-		"// Clear rtld_fini.			\n\t"	\
++		"/* Clear rtld_fini. */			\n\t"	\
+ 		"mov r0, #0				\n\t"	\
+ 		"					\n\t"	\
+-		"// Start the program.			\n\t"	\
++		"/* Start the program. */			\n\t"	\
+ 		"mov pc, %1				\n"	\
+ 		: /* no output */				\
+ 		: "r" (stack_pointer), "r" (destination)	\
 diff --git a/src/path/temp.c b/src/path/temp.c
 index bbcfb5f..b0d1b53 100644
 --- a/src/path/temp.c
