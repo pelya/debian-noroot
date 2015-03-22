@@ -1,12 +1,21 @@
 diff --git a/src/path/temp.c b/src/path/temp.c
-index bbcfb5f..583a3a7 100644
+index bbcfb5f..b0d1b53 100644
 --- a/src/path/temp.c
 +++ b/src/path/temp.c
-@@ -10,6 +10,8 @@
+@@ -10,6 +10,17 @@
  
  #include "cli/note.h"
  
-+#define P_tmpdir (getenv("PROOT_TMPDIR") != NULL ? getenv("PROOT_TMPDIR") : "/data/local/tmp")
++static const char *proot_tmpdir = P_tmpdir;
++
++/* __attribute__((constructor)) is GCC-specific extension */
++__attribute__((constructor)) static void init_tmpdir()
++{
++	if (getenv("PROOT_TMPDIR") != NULL)
++		proot_tmpdir = getenv("PROOT_TMPDIR");
++}
++
++#define P_tmpdir proot_tmpdir
 +
  /**
   * Remove recursively the content of the current working directory.
