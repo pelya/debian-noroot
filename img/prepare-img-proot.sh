@@ -55,8 +55,9 @@ CHROOT_CMD="qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux
 [ "$ARCH" = "x86" ] && CHROOT_CMD="chroot ."
 
 $UPDATE_PACKAGES && {
-	$CHROOT_CMD usr/bin/apt-get update
-	$CHROOT_CMD usr/bin/apt-get upgrade -y
+	echo "--update-packages is actually not needed"
+	#$CHROOT_CMD usr/bin/apt-get update
+	#$CHROOT_CMD usr/bin/apt-get upgrade -y
 }
 
 $SAVE_PACKAGES_LIST && {
