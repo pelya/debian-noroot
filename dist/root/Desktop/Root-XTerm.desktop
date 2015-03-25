@@ -2,7 +2,7 @@
 Comment[en_US]=
 Comment=
 Encoding=UTF-8
-Exec=fakeroot-tcp /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin /usr/bin/xterm -bg black -fg green -xrm 'XTerm*faceName: DroidSansMono' -xrm 'XTerm*faceSize: 8' /bin/bash
+Exec=fakeroot-tcp /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin /usr/bin/xterm -bg black -fg green -xrm 'XTerm*faceName: DroidSansMono' -xrm 'XTerm*faceSize: 8' -e /bin/bash -l
 GenericName[en_US]=
 GenericName=
 Icon=utilities-terminal
