@@ -1,0 +1,10 @@
+--- libgc-7.2d/debian/rules	2014-07-03 00:28:14.000000000 +0000
++++ libgc-7.2d/debian/rules	2015-03-26 18:02:13.000000000 +0000
+@@ -14,6 +14,7 @@
+ 	[ ! -d libatomic_ops-1.2 ] || mv libatomic_ops-1.2 libatomic_ops-1.2.bak
+ 	autoconf
+ 	EXTRA_TEST_LIBS="-lpthread" \
++	CFLAGS="-DUSE_MMAP_ANON=1" \
+ 	./configure \
+ 		$(CONFIG_OPTS) \
+ 		--enable-cplusplus \

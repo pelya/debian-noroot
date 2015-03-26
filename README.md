@@ -86,3 +86,7 @@ PRoot can be downloaded from:
 ```
 http://proot.me/
 ```
+
+There are two patched Debian packages in directory pkgs with their patches,
+you will need to create Debian chroots for armhf and i386 arhitecture,
+and build these packages from inside these chroots.
