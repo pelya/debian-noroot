@@ -2,7 +2,7 @@
 
 ARCH="`dpkg --print-architecture`"
 #ARCH=armhf
-#ARCH=x86
+#ARCH=i386
 [ -z "$ARCH" ] && {
 	echo "ARCH not defined!"
 	exit 1

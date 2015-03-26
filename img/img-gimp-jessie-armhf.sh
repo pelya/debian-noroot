@@ -13,4 +13,7 @@ sudo qemu-debootstrap --arch=armhf --verbose \
 && sudo $CHROOT apt-get update \
 && sudo $CHROOT apt-get upgrade -y \
 && sudo $CHROOT apt-get install -y `cat img-gimp-wheezy.pkg | sed 's/,/ /g'` \
+&& sudo cp ../pkgs/*_armhf.deb $DIR \
+&& sudo $CHROOT sh -c "dpkg -i *_armhf.deb" \
+&& sudo rm $DIR/*_armhf.deb $DIR \
 && sudo ./prepare-img-proot.sh $DIR
