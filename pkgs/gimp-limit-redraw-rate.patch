@@ -34,3 +34,16 @@ diff -u -r --unidirectional-new-file x86/gimp-2.8.14/debian/patches/series armhf
  disable-internal-help-browser
  01_hurd_ftbfs.patch
 +decrease-screen-redraw-rate.patch
+--- gimp-2.8.14/debian/changelog	2015-03-27 17:09:01.000000000 +0000
++++ gimp-2.8.14/debian/changelog	2015-03-27 17:08:48.000000000 +0000
+@@ -1,3 +1,10 @@
++gimp (2.8.14-1+b1) UNRELEASED; urgency=medium, binary-only=yes
++
++  * Binary-only non-maintainer upload for armhf; no source changes.
++  * Decrease screen redraw rate to 10FPS
++
++ -- pelya <x.pelya.x@gmail.com>  Fri, 27 Mar 2015 17:05:50 +0000
++
+ gimp (2.8.14-1) unstable; urgency=medium
+ 
+   * Imported Upstream version 2.8.14

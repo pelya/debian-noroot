@@ -18,6 +18,6 @@ env DEB_BUILD_OPTIONS=nocheck dpkg-buildpackage -us -uc -j4 || exit 1
 cd ..
 cd gimp-2.8.14 || exit 1
 patch -p1 < ../../gimp-limit-redraw-rate.patch || exit 1
-dpkg-buildpackage -us -uc -j4 || exit 1
+dpkg-buildpackage -us -uc -b -j4 || exit 1
 cd ..
 cd ..
