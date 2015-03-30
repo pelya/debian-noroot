@@ -13,4 +13,7 @@ sudo qemu-debootstrap --arch=i386 --verbose \
 && sudo $CHROOT apt-get update \
 && sudo $CHROOT apt-get upgrade -y \
 && sudo $CHROOT apt-get install -y `cat img-gimp-wheezy.pkg | sed 's/,/ /g'` \
+&& sudo cp ../pkgs/*_i386.deb $DIR \
+&& sudo $CHROOT sh -c "dpkg -i *_i386.deb" \
+&& sudo rm $DIR/*_i386.deb \
 && sudo ./prepare-img-proot.sh $DIR x86

@@ -49,8 +49,6 @@ CURDIR=`pwd`
 
 cd $DIST
 
-cat $CURDIR/sources-jessie.list | sed 's/jessie/wheezy/g' | tee etc/apt/sources.list > /dev/null
-
 CHROOT_CMD="qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot ."
 [ "$ARCH" = "x86" ] && CHROOT_CMD="chroot ."
 
