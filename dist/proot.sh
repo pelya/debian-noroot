@@ -23,4 +23,5 @@ ls usr/lib/jvm/java-7-openjdk-*/bin > /dev/null 2>&1 && JAVA_PATH=/`echo usr/lib
 export PATH=/usr/local/sbin:/usr/local/bin:$JAVA_PATH:/usr/sbin:/usr/bin:/sbin:/bin
 export "LD_PRELOAD=/libdisableselinux.so /libandroid-shmem.so"
 export PROOT_TMPDIR=`pwd`/tmp
+export PROOT_TMP_DIR=$PROOT_TMPDIR
 ./proot -r `pwd` -w / -b /dev -b /proc -b /sys -b /system $STORAGE "$@"
