@@ -12,20 +12,18 @@ Also, this is NOT official Debian.org release.
 There are several limitations:
 
 - It cannot mess up your Android device, because it's a regular well-behaved Android app, which does not need root access.
-- No pseudo-terminal support, so Libreoffice, XTerm and many other applications do not work.
-- Desktop environment is slightly broken.
-- Package manager crashes often.
-- No audio support. Maybe it will be added in the future, however it will lag a lot, and there's no way to fix the lag.
+- No audio support. Some time ago PulseAudio was somewhat supported, but now it's broken.
 - No OpenGL support. It's possible to add it but it's a huge chunk of work, and I will not be doing that.
 - No access to the device hardware. That means you cannot re-partition SD card, you cannot burn CD-Roms, you cannot run ping or sniff your network etc.
-- No ability to move app to SD card, you will need unified storage as in Nexus 7 / Note 3.
+- No ability to move app to SD card, so you will need a lot of internal storage.
+- Most servers such as SSH or Apache won't start, because they all need root features.
+  You can use tightvncserver instead of SSH, and wbox instead of Apache as a simple file sharing web server,
 
 How does that work.
 ===================
 
-The Ubuntu shell is launched using the "fakechroot" method, then it connects to XSDL X server.
-It uses LD_PRELOAD with libfakechroot.so and libfakedns.so (which is a re-implementation of the DNS client library,
-required because DNS-related calls are incompatible between Android and glibc).
+The Debian graphical shell is launched using PRoot, the ultimate Linux virtualization solution: http://proot.me/
+Then it launches XSDL X server to render it to screen.
 
 Development.
 ============
@@ -47,46 +45,26 @@ Run
 git submodule update --init --recursive
 ./build.sh
 ```
-That should compile the libfakechroot.so and libfakedns.so files.
-The XSDL X server is in external repository - to compile it, run:
-```
-sudo apt-get install bison libpixman-1-dev \
-libxfont-dev libxkbfile-dev libpciaccess-dev \
-xutils-dev xcb-proto python-xcbgen xsltproc \
-x11proto-bigreqs-dev x11proto-composite-dev \
-x11proto-core-dev x11proto-damage-dev \
-x11proto-dmx-dev x11proto-dri2-dev x11proto-fixes-dev \
-x11proto-fonts-dev x11proto-gl-dev \
-x11proto-input-dev x11proto-kb-dev \
-x11proto-print-dev x11proto-randr-dev \
-x11proto-record-dev x11proto-render-dev \
-x11proto-resource-dev x11proto-scrnsaver-dev \
-x11proto-video-dev x11proto-xcmisc-dev \
-x11proto-xext-dev x11proto-xf86bigfont-dev \
-x11proto-xf86dga-dev x11proto-xf86dri-dev \
-x11proto-xf86vidmode-dev x11proto-xinerama-dev \
-libxmuu-dev libxt-dev libsm-dev libice-dev \
-libxrender-dev libxrandr-dev curl autoconf automake libtool
+That should compile PRoot, libandroid-shmem.so used to speed up drawing speed,
+and libdisableselinux.so used to prevent Debian from messing up with Android security features.
 
-git clone git@github.com:pelya/commandergenius.git
-git submodule update --init project/jni/application/xserver/xserver
-rm project/jni/application/src
-ln -s xserver project/jni/application/src
-./changeAppSettings.sh -a
-android update project -p project
-./build.sh
+Busybox is precompiled, taken from this repository:
+https://github.com/pelya/busybox-android
+
+The scripts for creating Debian images are located in directory "img".
+To prepare image, run these scripts:
 ```
+cd img
+sudo ./img-debian-jessie-x86.sh
+sudo ./img-debian-jessie-armhf.sh
+sudo ./img-debian-jessie--prepare-obb.sh
+```
+
+The XSDL X server is in an external repository - to compile it, follow instructions here:
+https://github.com/pelya/commandergenius/tree/sdl_android/project/jni/application/xserver-debian
 then install resulting .apk file on your Android device, and run it.
 
-The scripts for creating Ubuntu images are located in directory "img".
-
-This app uses PRoot for chrooting into Debian rootfs,
-the fakechroot method is not used anymore.
-PRoot can be downloaded from:
-```
-http://proot.me/
-```
-
 There are two patched Debian packages in directory pkgs with their patches,
+used to improve GIMP drawing speed and fix a crash at start in Inkscape,
 you will need to create Debian chroots for armhf and i386 arhitecture,
 and build these packages from inside these chroots.
