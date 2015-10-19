@@ -24,4 +24,5 @@ export PATH=/usr/local/sbin:/usr/local/bin:$JAVA_PATH:/usr/sbin:/usr/bin:/sbin:/
 export "LD_PRELOAD=/libdisableselinux.so /libandroid-shmem.so"
 export PROOT_TMPDIR=`pwd`/tmp
 export PROOT_TMP_DIR=$PROOT_TMPDIR
+export TZ="`getprop persist.sys.timezone`"
 ./proot -r `pwd` -w / -b /dev -b /proc -b /sys -b /system $STORAGE "$@"
