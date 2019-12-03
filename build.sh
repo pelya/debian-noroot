@@ -26,19 +26,23 @@ for ARCH in $ARCH_LIST; do
 		cd ..
 	} || fail
 
-	[ -e talloc-2.1.0.tar.gz ] || wget http://www.samba.org/ftp/talloc/talloc-2.1.0.tar.gz || fail
+	[ -e talloc-2.3.0.tar.gz ] || wget https://www.samba.org/ftp/talloc/talloc-2.3.0.tar.gz || fail
+
+
+	[ -e libtalloc-$ARCH.a ] || {
+		[ -e talloc-2.3.0 ] || tar xvzf talloc-2.3.0.tar.gz || fail
+		cd talloc-2.3.0
+		make clean
+		../setCrossEnvironment-$ARCH.sh \
+			./configure build --cross-compile --cross-answers=`pwd`/../talloc-cross-answers.txt \
+			--without-gettext --disable-python || fail
+		#env CC=arm-linux-gnueabihf-gcc CFLAGS="-flto -fpic" LD=arm-linux-gnueabihf-gcc LDFLAGS="-flto" ./configure build --cross-compile --cross-execute='qemu-arm-static /usr/arm-linux-gnueabihf/lib/ld-linux.so.3 --library-path /usr/arm-linux-gnueabihf/lib' || fail
+		ar rcs ../libtalloc-$ARCH.a bin/default/talloc*.o
+		cd ..
+	} || fail
 
 	continue # BUILD SCRIPT REWORK IN PROGRESS
 
-[ -e libtalloc-$ARCH.a ] || {
-	[ -e talloc-2.1.0 ] || tar xvzf talloc-2.1.0.tar.gz || fail
-	cd talloc-2.1.0
-	make clean
-	env CC=arm-linux-gnueabihf-gcc CFLAGS="-flto -fpic" LD=arm-linux-gnueabihf-gcc LDFLAGS="-flto" ./configure build --cross-compile --cross-execute='qemu-arm-static /usr/arm-linux-gnueabihf/lib/ld-linux.so.3 --library-path /usr/arm-linux-gnueabihf/lib' || fail
-	#cp -f libtalloc.so ../libtalloc.so || fail
-	ar rcs ../libtalloc.a bin/default/talloc*.o # bin/default/lib/replace/replace*.o 
-	cd ..
-} || fail
 
 [ -e dist/proot ] || {
 	cd proot-src
