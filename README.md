@@ -39,11 +39,14 @@ Run
 git submodule update --init --recursive
 ./build.sh
 ```
-That should compile PRoot, libandroid-shmem.so used to speed up drawing speed,
+That should libandroid-shmem.so used to speed up drawing speed,
 and libdisableselinux.so used to prevent Debian from messing up with Android security features.
 
 Busybox is precompiled, taken from this repository:
 https://github.com/pelya/busybox-android
+
+Proot is precompiled, taken from here:
+https://bintray.com/termux/termux-packages-24/proot
 
 The scripts for creating Debian images are located in directory "img".
 To prepare image, run these scripts:
