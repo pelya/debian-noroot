@@ -52,6 +52,7 @@ cd $DIST
 CHROOT_CMD="qemu-arm-static lib/ld-linux-armhf.so.3 --library-path lib/arm-linux-gnueabihf usr/sbin/chroot ."
 [ "$ARCH" = "x86" ] && CHROOT_CMD="chroot ."
 [ "$ARCH" = "x86_64" ] && CHROOT_CMD="chroot ."
+[ "$ARCH" = "arm64" ] && CHROOT_CMD="qemu-arm-static usr/sbin/chroot ."
 
 $UPDATE_PACKAGES && {
 	echo "--update-packages is actually not needed"

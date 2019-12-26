@@ -30,7 +30,7 @@ Development.
 
 You'll need Android SDK and following packages:
 ```
-sudo apt-get install autoconf automake debhelper build-essential libtool qemu-user-static debootstrap pxz schroot
+sudo apt-get install autoconf automake debhelper build-essential libtool qemu-user-static debootstrap pxz schroot apt-cacher-ng
 sudo apt-get update
 ```
 
