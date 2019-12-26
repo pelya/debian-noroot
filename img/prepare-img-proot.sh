@@ -64,7 +64,7 @@ $SAVE_PACKAGES_LIST && {
 	$CHROOT_CMD usr/sbin/update-apt-xapian-index
 }
 
-$CHROOT_CMD usr/sbin/update-alternatives --set fakeroot /usr/bin/fakeroot-tcp
+$CHROOT_CMD usr/bin/update-alternatives --set fakeroot /usr/bin/fakeroot-tcp
 
 rm -f var/cache/apt/archives/*.deb
 rm -f var/log/bootstrap.log
@@ -88,8 +88,8 @@ $STRIP && {
 	rm -rf $STRIP_FILES
 }
 
-cp -a $CURDIR/../dist/* .
-[ -z "$ARCH" ] || cp -a -f $CURDIR/../dist-$ARCH/* .
+#cp -a $CURDIR/../dist/* .
+#[ -z "$ARCH" ] || cp -a -f $CURDIR/../dist-$ARCH/* .
 
 $NOARCHIVE && exit
 
