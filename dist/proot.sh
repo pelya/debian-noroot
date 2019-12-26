@@ -17,7 +17,9 @@ export LD_LIBRARY_PATH=
 #ls usr/lib/jvm/java-7-openjdk-*/bin > /dev/null 2>&1 && JAVA_PATH=/`echo usr/lib/jvm/java-7-openjdk-*/jre/bin`:/`echo usr/lib/jvm/java-7-openjdk-*/bin`
 export PATH=/usr/local/sbin:/usr/local/bin:$JAVA_PATH:/usr/sbin:/usr/bin:/sbin:/bin
 export "LD_PRELOAD=/libdisableselinux.so /libandroid-shmem.so"
+export TZ="`getprop persist.sys.timezone`"
 export PROOT_TMPDIR=`pwd`/tmp
 export PROOT_TMP_DIR=$PROOT_TMPDIR
-export TZ="`getprop persist.sys.timezone`"
+export PROOT_LOADER=`pwd`/../usr/bin/loader
+export PROOT_LOADER_32=`pwd`/../usr/bin/loader32
 ../usr/bin/proot -r `pwd` -w / -b /dev -b /proc -b /sys -b /system -b /data -b /mnt -b /storage /b odm /b oem /b vendor $STORAGE "$@"
