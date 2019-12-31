@@ -47,6 +47,7 @@ https://github.com/pelya/busybox-android
 
 Proot is precompiled, taken from here:
 https://bintray.com/termux/termux-packages-24/proot
+https://bintray.com/termux/termux-packages-24/libtalloc
 
 The scripts for creating Debian images are located in directory "img".
 To prepare image, run these scripts:
