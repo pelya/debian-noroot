@@ -22,4 +22,4 @@ export PROOT_TMPDIR=`pwd`/tmp
 export PROOT_TMP_DIR=$PROOT_TMPDIR
 export PROOT_LOADER=`pwd`/../usr/bin/loader
 export PROOT_LOADER_32=`pwd`/../usr/bin/loader32
-../usr/bin/proot -r `pwd` -w / -b /dev -b /proc -b /sys -b /system -b /data -b /mnt -b /storage /b odm /b oem /b vendor $STORAGE "$@"
+../usr/bin/proot -r `pwd` -w / -b /dev -b /proc -b /sys -b /system -b /data -b /mnt -b /storage -b /odm -b /oem -b /vendor $STORAGE "$@"
