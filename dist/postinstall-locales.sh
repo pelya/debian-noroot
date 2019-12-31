@@ -1,5 +1,6 @@
 #!/bin/sh
 
+export LD_LIBRARY_PATH=
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 if /usr/bin/dpkg -s locales >/dev/null 2>&1 ; then
