@@ -16,10 +16,14 @@ for ARCH in x86_64 arm64-v8a; do
 	cp -a -f $CURDIR/../dist-$ARCH/* .
 
 	ARCHIVE=$DIST-overlay-$ARCH
+	cd ..
 	tar c * | xz -8 > $CURDIR/$ARCHIVE.tar.xz
 
 	cd $CURDIR
 
+	[ -d $CURDIR/../../AndroidData ] && {
+		cp -f $CURDIR/$ARCHIVE.tar.xz $CURDIR/../../AndroidData/overlay-$ARCH.tar.xz
+	}
 done
 
 rm -rf overlay
