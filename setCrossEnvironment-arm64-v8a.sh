@@ -63,7 +63,6 @@ LDFLAGS="
 -Wl,-z,relro
 -Wl,-z,now
 -latomic
--lm
 $LDFLAGS"
 
 LDFLAGS="`echo $LDFLAGS | tr '\n' ' '`"

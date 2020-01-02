@@ -69,7 +69,6 @@ LDFLAGS="
 -Wl,-z,relro
 -Wl,-z,now
 -latomic
--lm
 -ldl
 $LDFLAGS"
 
