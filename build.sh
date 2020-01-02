@@ -2,9 +2,7 @@
 
 fail() { echo "Compilation failed!" ; exit 1; }
 
-#ARCH_LIST="arm64-v8a x86_64 armeabi-v7a x86"
-#ARCH_LIST="x86_64"
-ARCH_LIST="`arch`"
+ARCH_LIST="arm64-v8a x86_64"
 
 for ARCH in $ARCH_LIST; do
 
@@ -12,6 +10,18 @@ for ARCH in $ARCH_LIST; do
 	export ARCH=$ARCH
 
 	mkdir -p dist-$ARCH
+
+	[ -e dist-$ARCH/libandroid-shmem-disableselinux.so ] || {
+		env ARCH=$ARCH ./setCrossEnvironment-$ARCH.sh sh -c ' \
+			$CC $CFLAGS -Iandroid-shmem -Iandroid-shmem/libancillary -D_LINUX_IPC_H -DNDEBUG \
+			android-shmem/*.c disableselinux/*.c \
+			--shared $LDFLAGS -Wl,--version-script=disableselinux/exports.txt \
+			-o dist-$ARCH/libandroid-shmem-disableselinux.so &&
+			$STRIP dist-$ARCH/libandroid-shmem-disableselinux.so \
+		' || fail
+	} || fail
+
+	continue # Do not bother with this crap, grab precompiled proot from https://bintray.com/termux/termux-packages-24/proot
 
 	[ -e dist-$ARCH/libdisableselinux.so ] || {
 		gcc -fPIC -shared disableselinux/*.c $CFLAGS $LDFLAGS -o dist-$ARCH/libdisableselinux.so && \
@@ -24,8 +34,6 @@ for ARCH in $ARCH_LIST; do
 		cp -f libandroid-shmem-$ARCH.so ../dist-$ARCH/libandroid-shmem.so
 		cd ..
 	} || fail
-
-	continue # Do not bother with this crap, grab precompiled proot from https://bintray.com/termux/termux-packages-24/proot
 
 	[ -e talloc-2.3.0.tar.gz ] || wget https://www.samba.org/ftp/talloc/talloc-2.3.0.tar.gz || fail
 

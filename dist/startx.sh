@@ -6,7 +6,7 @@ export LD_LIBRARY_PATH=
 #ls usr/lib/jvm/java-7-openjdk-*/bin > /dev/null 2>&1 && JAVA_PATH=/`echo usr/lib/jvm/java-7-openjdk-*/jre/bin`:/`echo usr/lib/jvm/java-7-openjdk-*/bin`
 #export PATH=/usr/local/sbin:/usr/local/bin:$JAVA_PATH:/usr/sbin:/usr/bin:/sbin:/bin
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-export "LD_PRELOAD=/libdisableselinux.so /libandroid-shmem.so"
+#export "LD_PRELOAD=/libdisableselinux.so /libandroid-shmem.so"
 
 rm -f /var/run/dbus/pid
 fakeroot-tcp /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin dbus-daemon --system

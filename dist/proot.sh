@@ -12,6 +12,7 @@ STORAGE="-b $SDCARD"
 export HOME=/home/$USER
 export SHELL=/bin/bash
 export LD_LIBRARY_PATH=$SECURE_STORAGE_DIR/usr/bin
+export LD_PRELOAD=$SECURE_STORAGE_DIR/usr/bin/libandroid-shmem-disableselinux.so
 export TZ="`getprop persist.sys.timezone`"
 export PROOT_TMPDIR=`pwd`/tmp
 export PROOT_TMP_DIR=$PROOT_TMPDIR

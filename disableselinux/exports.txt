@@ -1,0 +1,15 @@
+{
+	global:
+		shmctl;
+		shmget;
+		shmat;
+		shmdt;
+
+		audit_open;
+		is_selinux_enabled;
+		setexecfilecon;
+		setexeccon;
+		setfilecon;
+
+	local: *;         # hide everything else
+};
