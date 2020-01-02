@@ -11,6 +11,22 @@ for ARCH in $ARCH_LIST; do
 
 	mkdir -p dist-$ARCH
 
+	# Debian library
+	[ -e dist-$ARCH/libandroid-shmem-disableselinux.so ] || {
+		gcc -ffunction-sections -fdata-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -Wformat -Werror=format-security -Os -DNDEBUG -fPIC \
+			-Iandroid-shmem -Iandroid-shmem/libancillary -D_LINUX_IPC_H -DNDEBUG \
+			--shared -Wl,--version-script=disableselinux/exports.txt \
+			android-shmem/*.c disableselinux/*.c \
+			-Wl,--gc-sections -Wl,--build-id -Wl,--warn-shared-textrel -Wl,--fatal-warnings -Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now \
+			-lpthread \
+			-o dist-$ARCH/libandroid-shmem-disableselinux.so &&
+			strip dist-$ARCH/libandroid-shmem-disableselinux.so \
+		|| fail
+	} || fail
+
+	continue
+
+	# Android native library
 	[ -e dist-$ARCH/libandroid-shmem-disableselinux.so ] || {
 		env ARCH=$ARCH ./setCrossEnvironment-$ARCH.sh sh -c ' \
 			$CC $CFLAGS -Iandroid-shmem -Iandroid-shmem/libancillary -D_LINUX_IPC_H -DNDEBUG \

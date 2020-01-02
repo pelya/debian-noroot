@@ -1,0 +1,6 @@
+style "xfdesktop-icon-view" {
+    XfdesktopIconView::cell-spacing = 10
+    XfdesktopIconView::cell-padding = 1
+    XfdesktopIconView::cell-text-width-proportion = 3
+}
+widget_class "*XfdesktopIconView*" style "xfdesktop-icon-view"
