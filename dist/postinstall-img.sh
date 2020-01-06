@@ -20,7 +20,7 @@ mkdir var/run/dbus
 mkdir var/run/xauth
 mkdir run/dbus
 mkdir run/xauth
-ln -s /usr/bin/dbus-launch bin/dbus-launch
+#ln -s /usr/bin/dbus-launch bin/dbus-launch
 mkdir var/lib/dbus
 mkdir root
 mkdir root/Desktop
@@ -42,7 +42,17 @@ mkdir home/$USER
 ../busybox cp -a -f etc/skel/. home/$USER/ 2>&1
 ../busybox cp -a -f root/. home/$USER/ 2>&1
 
+echo "AWK:"
+ls -l usr/bin/awk
+ls -l etc/alternatives/awk
+ls -l usr/share/locale/locale.alias
+
 echo "Updating locales for lang $LANG"
 logwrapper ./proot.sh /postinstall-locales.sh
+
+echo "AWK:"
+ls -l usr/bin/awk
+ls -l etc/alternatives/awk
+ls -l usr/share/locale/locale.alias
 
 echo "Postinstall script finished"
