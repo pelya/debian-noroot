@@ -6,6 +6,5 @@
 
 
 /usr/bin/sleep 1
-/usr/bin/dbus-launch --exit-with-session sh -c '/usr/bin/xfce4-session ; /usr/bin/setsid /usr/bin/sh -c "cd /proc/ ; for f in [0-9]* ; do [ \$f = \$\$ ] || /usr/bin/kill -9 \$f ; done"' &
+/usr/bin/dbus-launch --exit-with-session /usr/bin/xfce4-session
 
-wait

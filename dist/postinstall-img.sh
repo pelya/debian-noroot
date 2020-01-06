@@ -113,4 +113,13 @@ echo "=== ./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/sh -c 'which ls'"
 echo "=== ./proot.sh /bin/sh -c 'which ls'"
 ./proot.sh /bin/sh -c 'which ls'
 
+echo "=== ./proot.sh /ls-dbg --version"
+./proot.sh  /ls-dbg --version
+
+echo "=== ./proot.sh /ls-dbg -l"
+./proot.sh  /ls-dbg -l
+
+echo "=== ./proot.sh /ls-dbg -l /usr/sbin"
+./proot.sh  /ls-dbg -l /usr/sbin
+
 echo "=== debug done"
