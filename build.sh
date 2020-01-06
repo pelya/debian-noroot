@@ -2,7 +2,8 @@
 
 fail() { echo "Compilation failed!" ; exit 1; }
 
-ARCH_LIST="arm64-v8a x86_64"
+#ARCH_LIST="arm64-v8a x86_64"
+ARCH_LIST="`arch`"
 
 for ARCH in $ARCH_LIST; do
 
@@ -12,7 +13,7 @@ for ARCH in $ARCH_LIST; do
 	mkdir -p dist-$ARCH
 
 	# Debian library
-	[ -e dist-$ARCH/libandroid-shmem-disableselinux.so ] || {
+	false && [ -e dist-$ARCH/libandroid-shmem-disableselinux.so ] || {
 		gcc -ffunction-sections -fdata-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -Wformat -Werror=format-security -Os -DNDEBUG -fPIC \
 			-Iandroid-shmem -Iandroid-shmem/libancillary -D_LINUX_IPC_H -DNDEBUG \
 			--shared -Wl,--version-script=disableselinux/exports.txt \

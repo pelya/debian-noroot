@@ -1,14 +1,23 @@
 #!/bin/sh
 
-export LD_LIBRARY_PATH=
-export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+echo "$0 - updating locales"
 
-if /usr/bin/dpkg -s locales >/dev/null 2>&1 ; then
-	echo "Updating locales for lang $LANG" | tee -a /tmp/postinstall-locales.log
+echo "$0 - updating locales 2"
+
+#export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+echo "$0 - updating locales 3"
+
+if /usr/bin/dpkg -s locales ; then
+	echo "Updating locales for lang $LANG"
 else
-	echo "No locales package installed, nothing to do" | tee -a /tmp/postinstall-locales.log
+	echo "No locales package installed, nothing to do"
 	exit
 fi
 
+echo "$0 - updating locales 4"
+
 echo "$LANG UTF-8" >> /etc/locale.gen
-/usr/bin/fakeroot /usr/sbin/dpkg-reconfigure --frontend=noninteractive locales | tee -a /tmp/postinstall-locales.log
+/usr/bin/fakeroot-tcp /usr/sbin/dpkg-reconfigure --frontend=noninteractive locales
+
+echo "$0 - updating locales done"

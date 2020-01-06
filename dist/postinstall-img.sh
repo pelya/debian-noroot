@@ -43,6 +43,74 @@ mkdir home/$USER
 ../busybox cp -a -f root/. home/$USER/ 2>&1
 
 echo "Updating locales for lang $LANG"
-./proot.sh ./postinstall-locales.sh
+logwrapper ./proot.sh /postinstall-locales.sh
 
 echo "Postinstall script finished"
+
+echo "=== ./proot.sh /bin/ls -l /usr/sbin"
+./proot.sh /bin/ls -l /usr/sbin
+echo "=== ./proot.sh /bin/ls -l /data/data/com.cuntubuntu/files/img"
+./proot.sh /bin/ls -l /data/data/com.cuntubuntu/files/img
+echo "=== ls -l"
+ls -l
+echo "=== ./proot.sh /bin/ls -l"
+./proot.sh /bin/ls -l
+echo "=== ./proot.sh /system/bin/ls -l"
+./proot.sh /system/bin/ls -l
+echo "=== ./proot.sh /system/bin/ls --version"
+./proot.sh /system/bin/ls --version
+echo "=== ./proot.sh /bin/ls --version"
+./proot.sh /bin/ls --version
+echo "=== ./proot.sh /bin/sh -c echo ====shell===="
+./proot.sh /bin/sh -c 'echo ====shell===='
+echo "=== ./proot.sh /bin/sh -c set"
+./proot.sh /bin/sh -c set
+echo "=== ./proot.sh /bin/sh -c '/bin/ls -l'"
+./proot.sh /bin/sh -c '/bin/ls -l'
+echo "=== ./proot.sh /bin/sh -c '/bin/ls -l /usr/sbin'"
+./proot.sh /bin/sh -c '/bin/ls -l /usr/sbin'
+echo "=== ./proot.sh /bin/sh -c '/bin/ls -l /data/data/com.cuntubuntu/files/img'"
+./proot.sh /bin/sh -c '/bin/ls -l /data/data/com.cuntubuntu/files/img'
+echo "=== ./proot.sh /bin/sh -c '/bin/ls -l /data/data/com.cuntubuntu/files/img/usr/sbin'"
+./proot.sh /bin/sh -c '/bin/ls -l /data/data/com.cuntubuntu/files/img/usr/sbin'
+echo "=== ./proot.sh /bin/sh -c '/bin/ls --version'"
+./proot.sh /bin/sh -c '/bin/ls --version'
+echo "=== ./proot.sh /bin/sh -c 'ls --version'"
+./proot.sh /bin/sh -c 'ls --version'
+echo "=== ./proot.sh /bin/zcat --help"
+./proot.sh /bin/zcat --help
+
+echo "=== ./proot.sh /bin/sh -c '/bin/zcat --help'"
+./proot.sh /bin/sh -c '/bin/zcat --help'
+
+echo "=== ./proot.sh /bin/which ls"
+./proot.sh /bin/which ls
+
+echo "=== ./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so"
+./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so
+
+echo "=== ./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/ls -l"
+./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/ls -l
+
+echo "=== ./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/ls --version"
+./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/ls --version
+
+echo "=== ./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/sh -c 'echo ====shell===='"
+./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/sh -c 'echo ====shell===='
+
+echo "=== ./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/sh -c '/bin/ls -l'"
+./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/sh -c '/bin/ls -l'
+
+echo "=== ./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/sh -c '/bin/ls --version'"
+./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/sh -c '/bin/ls --version'
+
+echo "=== ./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/sh -c 'ls --version'"
+./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/sh -c 'ls --version'
+
+echo "=== ./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/sh -c 'which ls'"
+./proot.sh /usr/lib/x86_64-linux-gnu/ld-2.28.so /bin/sh -c 'which ls'
+
+echo "=== ./proot.sh /bin/sh -c 'which ls'"
+./proot.sh /bin/sh -c 'which ls'
+
+echo "=== debug done"

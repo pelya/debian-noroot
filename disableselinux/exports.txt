@@ -11,5 +11,18 @@
 		setexeccon;
 		setfilecon;
 
+		getxattr;
+		lgetxattr;
+		fgetxattr;
+		listxattr;
+		llistxattr;
+		flistxattr;
+		removexattr;
+		lremovexattr;
+		fremovexattr;
+		setxattr;
+		lsetxattr;
+		fsetxattr;
+
 	local: *;         # hide everything else
 };

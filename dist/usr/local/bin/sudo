@@ -20,6 +20,4 @@ while [ -n "$1" ]; do
 	esac
 done
 
-JAVA_PATH=/usr/lib/jvm/default-java/jre/bin:/usr/lib/jvm/default-java/bin
-
-/usr/bin/fakeroot-tcp /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:$JAVA_PATH:/usr/sbin:/usr/bin:/sbin:/bin "$@"
+/usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin /usr/bin/fakeroot-tcp "$@"
