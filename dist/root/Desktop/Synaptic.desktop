@@ -1,7 +1,7 @@
 [Desktop Entry]
 Comment[en_US]=
 Comment=
-Exec=/bin/bash -c "xmessage -fn '-*-*-*-*-*-*-34-*-*-*-*-*-*-*' -buttons ===Install===:0,===Cancel===:1 -default ===Install=== -nearmouse 'Install Synaptic package manager?' && fakeroot-tcp /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin /usr/bin/xterm -bg black -fg green -xrm 'XTerm*faceName: DroidSansMono' -xrm 'XTerm*faceSize: 8' -e /bin/bash -c 'apt-get update && apt-get -y install synaptic apt-xapian-index gawk && /usr/sbin/update-apt-xapian-index && cp -f /root/.dist/Synaptic.desktop $HOME/Desktop/Synaptic.desktop || read'"
+Exec=/bin/bash -c "xmessage -fn '-*-*-*-*-*-*-34-*-*-*-*-*-*-*' -buttons ===Install===:0,===Cancel===:1 -default ===Install=== -nearmouse 'Install Synaptic package manager?' && fakeroot-tcp /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin /usr/bin/xterm -bg black -fg green -xrm 'XTerm*faceName: DroidSansMono' -xrm 'XTerm*faceSize: 8' -e /bin/bash -c 'apt-get update && apt-get -y install synaptic apt-xapian-index gawk && /usr/sbin/update-apt-xapian-index && cp -f /root/.dist/Synaptic.desktop $HOME/Desktop/Synaptic.desktop && /usr/sbin/synaptic || read'"
 GenericName[en_US]=Synaptic
 GenericName=Synaptic
 Icon=system-installer

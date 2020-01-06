@@ -7,6 +7,8 @@ ARCH_LIST="`arch`"
 
 for ARCH in $ARCH_LIST; do
 
+	[ "$ARCH" = aarch64 ] && ARCH=arm64-v8a
+
 	echo "Building for arch $ARCH"
 	export ARCH=$ARCH
 

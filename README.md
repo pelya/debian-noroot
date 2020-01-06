@@ -31,38 +31,35 @@ Development.
 You'll need Android SDK and following packages:
 ```
 sudo apt-get install autoconf automake debhelper build-essential libtool qemu-user-static debootstrap pxz schroot apt-cacher-ng
-sudo apt-get update
 ```
 
-Run
+The scripts for creating Debian images are located in directory "img".
+To prepare image, run these scripts:
+
 ```
 git submodule update --init --recursive
+cd img
+sudo ./img-debian-buster-arm64-v8a.sh
+sudo ./img-debian-buster-x86_64.sh
+cd ..
 ./build.sh
+sudo mount -o bind . img/dist-debian-buster-arm64-v8a/img/mnt
+sudo chroot img/dist-debian-buster-arm64-v8a/img
+apt-get update
+apt-get install gcc
+cd mnt
+./build.sh
+exit
+cd img
+prepare-img-overlay.sh
 ```
-That should libandroid-shmem.so used to speed up drawing speed,
-and libdisableselinux.so used to prevent Debian from messing up with Android security features.
-
-Busybox is precompiled, taken from this repository:
-https://github.com/pelya/busybox-android
+That should build libandroid-shmem-disableselinux.so used to speed up drawing speed,
+and prevent Debian from messing up with Android security features.
 
 Proot is precompiled, taken from here:
 https://bintray.com/termux/termux-packages-24/proot
 https://bintray.com/termux/termux-packages-24/libtalloc
 
-The scripts for creating Debian images are located in directory "img".
-To prepare image, run these scripts:
-```
-cd img
-sudo ./img-debian-jessie-x86.sh
-sudo ./img-debian-jessie-armhf.sh
-sudo ./img-debian-jessie--prepare-obb.sh
-```
-
 The XSDL X server is in an external repository - to compile it, follow instructions here:
 https://github.com/pelya/commandergenius/tree/sdl_android/project/jni/application/xserver-debian
 then install resulting .apk file on your Android device, and run it.
-
-There are two patched Debian packages in directory pkgs with their patches,
-used to improve GIMP drawing speed and fix a crash at start in Inkscape,
-you will need to create Debian chroots for armhf and i386 arhitecture,
-and build these packages from inside these chroots.
