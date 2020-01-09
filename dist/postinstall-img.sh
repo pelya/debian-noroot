@@ -42,17 +42,7 @@ mkdir home/$USER
 ../busybox cp -a -f etc/skel/. home/$USER/ 2>&1
 ../busybox cp -a -f root/. home/$USER/ 2>&1
 
-echo "AWK:"
-ls -l usr/bin/awk
-ls -l etc/alternatives/awk
-ls -l usr/share/locale/locale.alias
-
 echo "Updating locales for lang $LANG"
-logwrapper ./proot.sh /postinstall-locales.sh
-
-echo "AWK:"
-ls -l usr/bin/awk
-ls -l etc/alternatives/awk
-ls -l usr/share/locale/locale.alias
+./proot.sh /postinstall-locales.sh
 
 echo "Postinstall script finished"

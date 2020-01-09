@@ -7,6 +7,6 @@ else
 	exit
 fi
 
-echo "$LANG UTF-8" >> /etc/locale.gen
+echo "$LANG.UTF-8 UTF-8" >> /etc/locale.gen
 /usr/bin/fakeroot-tcp /usr/sbin/dpkg-reconfigure --frontend=noninteractive locales
 
