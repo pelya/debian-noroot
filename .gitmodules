@@ -14,3 +14,6 @@
 	path = proot-src-by-termux
 	url = https://github.com/termux/proot.git
 	branch = master
+[submodule "proot-src-userland"]
+	path = proot-src-userland
+	url = https://github.com/CypherpunkArmory/proot
