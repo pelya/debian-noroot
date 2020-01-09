@@ -42,7 +42,4 @@ mkdir home/$USER
 ../busybox cp -a -f etc/skel/. home/$USER/ 2>&1
 ../busybox cp -a -f root/. home/$USER/ 2>&1
 
-echo "Updating locales for lang $LANG"
-./proot.sh /postinstall-locales.sh
-
 echo "Postinstall script finished"
