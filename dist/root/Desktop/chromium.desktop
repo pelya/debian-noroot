@@ -1,0 +1,19 @@
+[Desktop Entry]
+Comment[en_US]=
+Comment=
+Exec=/bin/bash -c "xmessage -fn '-*-*-*-*-*-*-34-*-*-*-*-*-*-*' -buttons ===Install===:0,===Cancel===:1 -default ===Install=== -nearmouse 'Install Chromium Web Browser?' && fakeroot-tcp /usr/bin/env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin /usr/bin/xfce4-terminal -x /bin/sh -c 'apt-get update && apt-get -y install chromium && cp -f /root/.dist/chromium.desktop $HOME/Desktop/chromium.desktop && /usr/bin/chromium --disable-dev-shm-usage --no-sandbox || read'"
+GenericName[en_US]=Chromium Web Browser
+GenericName=Chromium Web Browser
+Icon=system-installer
+MimeType=
+Name=Synaptic
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+Version=1.0
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
