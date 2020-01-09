@@ -15,11 +15,6 @@ for ARCH in x86_64 arm64-v8a; do
 	cp -a $CURDIR/../dist/* .
 	cp -a -f $CURDIR/../dist-$ARCH/* .
 
-	cd $CURDIR/$DIST-$ARCH
-	find img -type l > $CURDIR/$DIST-symlinks-$ARCH.txt
-	tar c -T $CURDIR/$DIST-symlinks-$ARCH.txt | xz -8 > $CURDIR/$DIST-symlinks-$ARCH.tar.xz
-	cd $CURDIR/overlay/img
-
 	ARCHIVE=$DIST-overlay-$ARCH
 	cd ..
 	tar c * | xz -8 > $CURDIR/$ARCHIVE.tar.xz

@@ -95,8 +95,8 @@ $NOARCHIVE && exit
 
 ARCHIVE=`echo $DIST | sed 's@/.*@@'`
 cd $CURDIR/$ARCHIVE
-if $XZ; then
-	tar c * | pxz -8 > ../$ARCHIVE.tar.xz
-else
-	tar czf ../$ARCHIVE.tar.gz *
-fi
+
+tar c * | pxz -8 > ../$ARCHIVE.tar.xz
+
+find img -type l > ../$DIST-symlinks-$ARCH.txt
+tar c -T ../$DIST-symlinks-$ARCH.txt | xz -8 > ../$DIST-symlinks-$ARCH.tar.xz
